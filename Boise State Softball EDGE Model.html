@@ -77,6 +77,7 @@ tr:hover td{background:rgba(0,51,160,0.04)}
 .b-pit{background:rgba(26,86,212,0.1);color:#1A56D4;border:1px solid rgba(26,86,212,0.22)}
 .b-two{background:rgba(214,67,9,0.1);color:#C2410C;border:1px solid rgba(214,67,9,0.22)}
 .b-rs{background:rgba(99,102,241,0.1);color:#4F46E5;border:1px solid rgba(99,102,241,0.2)}
+.b-inc{background:rgba(16,185,129,0.1);color:#10B981;border:1px solid rgba(16,185,129,0.22)}
 
 /* ── EDGE VALUES ── */
 .wp{color:#15803D;font-weight:700}
@@ -838,7 +839,8 @@ function renderAll(){
   // --- ROSTER TABLE ---
   var pb=document.getElementById('pos-body');
   pb.innerHTML='';
-  var maxAbs=Math.max.apply(null,pdS.filter(function(p){return !p.redshirt&&!p.incoming;}).map(function(p){return Math.abs(p.total);})||[1]);
+  var _absVals=pdS.filter(function(p){return !p.redshirt&&!p.incoming;}).map(function(p){return Math.abs(p.total);});
+  var maxAbs=_absVals.length?Math.max.apply(null,_absVals):1;
   pdS.forEach(function(p,i){
     var isRS=p.redshirt, isINC=p.incoming;
     var g=isRS?{g:'RS',c:'grs'}:isINC?{g:'INC',c:'ginc'}:gradeObj(p.total);
@@ -886,6 +888,7 @@ function renderAll(){
   // --- PITCHING TABLE ---
   var pb2=document.getElementById('pit-body');
   pb2.innerHTML='';
+  var pitRank=0;
   pitS.forEach(function(p,i){
     if(p.incoming){
       var tr=document.createElement('tr');
@@ -894,7 +897,7 @@ function renderAll(){
         '<td style="color:var(--muted);font-size:12px">—</td>'+
         '<td><strong>'+p.name+'</strong></td>'+
         '<td style="color:var(--muted)">'+p.yr+'</td>'+
-        '<td colspan="13" style="color:#10B981;font-size:12px;font-weight:600">INCOMING · No 2026 stats available</td>'+
+        '<td colspan="12" style="color:#10B981;font-size:12px;font-weight:600">INCOMING · No 2026 stats available</td>'+
         '<td><div class="gc ginc">INC</div></td><td></td>';
       pb2.appendChild(tr);
       return;
@@ -902,7 +905,8 @@ function renderAll(){
     var pEDGE=calcPEDGE(p);
     var g=gradeObj(pEDGE);
     var kbb=(p.so/Math.max(p.bb,1)).toFixed(2);
-    var rc=i===0?'r-top':pEDGE<0?'r-neg':'';
+    var rc=pitRank===0?'r-top':pEDGE<0?'r-neg':'';
+    pitRank++;
     var kCol=p.kPct>=17?'var(--green)':p.kPct<10?'var(--red)':'var(--muted)';
     var bCol=p.bbPct>15?'var(--red)':p.bbPct<10?'var(--green)':'var(--muted)';
     var xCol=p.xfip<3.5?'var(--green)':p.xfip>5.0?'var(--red)':'var(--muted)';
@@ -972,10 +976,10 @@ function renderAll(){
 function renderDecisions(allS,d,posEDGETotal,budget,floor,n){
   var db=document.getElementById('dec-body');
   db.innerHTML='';
-  var keep=allS.filter(function(p){return !p.redshirt&&p.total>=1.5;}).sort(function(a,b){return b.total-a.total;});
-  var dev=allS.filter(function(p){return !p.redshirt&&p.total>=0&&p.total<1.5;}).sort(function(a,b){return b.total-a.total;});
-  var risk=allS.filter(function(p){return !p.redshirt&&p.total<0;}).sort(function(a,b){return a.total-b.total;});
-  var rs=allS.filter(function(p){return p.redshirt;});
+  var keep=allS.filter(function(p){return !p.redshirt&&!p.incoming&&p.total>=1.5;}).sort(function(a,b){return b.total-a.total;});
+  var dev=allS.filter(function(p){return !p.redshirt&&!p.incoming&&p.total>=0&&p.total<1.5;}).sort(function(a,b){return b.total-a.total;});
+  var risk=allS.filter(function(p){return !p.redshirt&&!p.incoming&&p.total<0;}).sort(function(a,b){return a.total-b.total;});
+  var rs=allS.filter(function(p){return p.redshirt||p.incoming;});
 
   function bucket(list,cls,title){
     if(!list.length) return;
@@ -1041,7 +1045,7 @@ function getNat(){
 function renderNat(){
   var nv=getNat();
   var d=buildData();
-  var act=d.pd.filter(function(p){return !p.redshirt;}).sort(function(a,b){return b.total-a.total;});
+  var act=d.pd.filter(function(p){return !p.redshirt&&!p.incoming;}).sort(function(a,b){return b.total-a.total;});
   var hb=document.getElementById('nat-hit-body');
   hb.innerHTML='';
   act.forEach(function(p){
@@ -1061,7 +1065,7 @@ function renderNat(){
   });
   var pb=document.getElementById('nat-pit-body');
   pb.innerHTML='';
-  pitchers.slice().sort(function(a,b){return a.era-b.era;}).forEach(function(p){
+  pitchers.filter(function(p){return !p.incoming;}).slice().sort(function(a,b){return a.era-b.era;}).forEach(function(p){
     var tr=document.createElement('tr');
     tr.innerHTML=
       '<td><strong>'+p.name+'</strong>'+(p.twoWay?'<span class="twoflag" style="margin-left:4px">2-WAY</span>':'')+'</td>'+
@@ -1126,7 +1130,7 @@ function runPortal(){
   }
   var total=Math.round((oEDGE+dEDGE+pEDGE)*100)/100;
   // BSU position comparison
-  var samePos=d.all.filter(function(p){return !p.redshirt&&p.pos===pos;}).sort(function(a,b){return b.total-a.total;});
+  var samePos=d.all.filter(function(p){return !p.redshirt&&!p.incoming&&p.pos===pos;}).sort(function(a,b){return b.total-a.total;});
   var posCompHtml='';
   if(samePos.length){
     var comp=samePos[0];
