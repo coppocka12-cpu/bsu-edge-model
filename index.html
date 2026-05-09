@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boise State Softball · EDGE Analytics 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#0033A0;--blue-mid:#1A56D4;--blue-dim:rgba(0,51,160,0.08);--orange:#D64309;--orange-bright:#F47920;--bg:#F4F5F9;--surface:#FFFFFF;--surface-2:#ECEEF5;--border:rgba(0,0,0,0.09);--border-blue:rgba(26,86,212,0.22);--text:#111111;--muted:#64748B;--muted-2:#CBD5E1;--green:#15803D;--red:#DC2626;--amber:#D97706;--r:8px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+
+/* ── HEADER ── */
+.hdr{background:linear-gradient(180deg,#0D0D0D 0%,#060606 100%);border-bottom:3px solid var(--orange-bright);color:#fff;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:68px;position:sticky;top:0;z-index:100}
+.hdr-l{display:flex;align-items:center;gap:0}
+.hdr-logo-block{display:flex;align-items:center;padding-right:24px;border-right:1px solid rgba(255,255,255,0.15)}
+.hdr-info{padding-left:24px}
+.hdr-t{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:.5px;line-height:1.1;color:rgba(255,255,255,0.88)}
+.hdr-s{font-size:11px;color:rgba(255,255,255,0.38);margin-top:3px;letter-spacing:.2px}
+.hdr-r-block{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.hdr-record{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:rgba(255,255,255,0.65);letter-spacing:1px}
+/* Bronco Pro EDGE wordmark */
+.bpe-wordmark{font-family:'Barlow Condensed',sans-serif;font-style:italic;line-height:1;letter-spacing:1.5px;white-space:nowrap;display:flex;align-items:baseline;gap:5px}
+.bpe-bronco{color:#FFFFFF;font-weight:700;font-size:26px}
+.bpe-pro{color:var(--orange-bright);font-weight:700;font-size:26px}
+.bpe-edge{color:#FFFFFF;font-weight:900;font-size:29px;text-decoration:underline;text-decoration-color:var(--orange-bright);text-underline-offset:4px}
+
+/* ── NAV ── */
+.nav{background:#FFFFFF;border-bottom:1px solid rgba(0,0,0,0.1);padding:0 2rem;display:flex;overflow-x:auto;gap:0;scrollbar-width:none;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.nav::-webkit-scrollbar{display:none}
+.nb{padding:14px 15px;font-size:11px;font-weight:700;cursor:pointer;border:none;background:none;color:#94A3B8;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;text-transform:uppercase;letter-spacing:.8px;font-family:'DM Sans',sans-serif;transition:color .15s}
+.nb:hover{color:#111111}
+.nb.active{color:var(--orange-bright);border-bottom-color:var(--orange-bright)}
+
+/* ── LAYOUT ── */
+.wrap{max-width:1320px;margin:0 auto;padding:1.5rem 2rem}
+.tp{display:none}.tp.active{display:block}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,0.06);padding:1.25rem 1.5rem;margin-bottom:1.25rem}
+.ct{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;margin-bottom:.75rem;text-transform:uppercase;letter-spacing:1.2px;color:#111111}
+.cs{font-size:12px;color:var(--muted);margin-top:-6px;margin-bottom:12px;line-height:1.65}
+
+/* ── METRIC TILES ── */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin-bottom:1.25rem}
+.met{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--orange-bright);border-radius:var(--r);padding:1rem 1.2rem;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.ml{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.mv{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;color:#111111;line-height:1}
+.ms{font-size:11px;color:var(--muted);margin-top:5px}
+
+/* ── TABLES ── */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:9px 10px;font-size:10px;font-weight:700;color:#FFFFFF;text-transform:uppercase;letter-spacing:.9px;border-bottom:none;background:#111111;white-space:nowrap}
+td{padding:8px 10px;border-bottom:1px solid rgba(0,0,0,0.06);vertical-align:middle;color:#111111}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(0,51,160,0.04)}
+.r-top td{border-left:3px solid var(--orange-bright)}
+.r-neg td{border-left:3px solid var(--red)}
+.r-rs td{border-left:3px solid var(--blue-mid)}
+.r-inc td{border-left:3px solid #10B981}
+.ginc{background:rgba(16,185,129,0.1);color:#10B981;border:1px solid rgba(16,185,129,0.22)}
+.roster-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:12px}
+.pos-tile{border-radius:8px;padding:12px;text-align:center;border:1px solid var(--border)}
+.pos-tile.over{border-color:#f59e0b;background:rgba(245,158,11,0.06)}
+.pos-tile.under{border-color:#dc2626;background:rgba(220,38,38,0.06)}
+.pos-tile.ok{border-color:#10B981;background:rgba(16,185,129,0.06)}
+.pos-tile h5{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin:0 0 5px}
+.pos-tile .pcount{font-size:26px;font-weight:800;color:var(--text);line-height:1}
+.pos-tile .pideal{font-size:11px;color:var(--muted);margin-top:3px}
+.pos-tile .pstatus{font-size:11px;font-weight:700;margin-top:4px}
+.pos-tile .ppreview{font-size:10px;color:var(--orange-bright);font-weight:700;margin-top:5px;letter-spacing:.3px}
+.ptile-preview{box-shadow:0 0 0 2px var(--orange-bright);position:relative}
+
+/* ── BADGES ── */
+.badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.4px}
+.b-pos{background:rgba(21,128,61,0.1);color:#15803D;border:1px solid rgba(21,128,61,0.22)}
+.b-pit{background:rgba(26,86,212,0.1);color:#1A56D4;border:1px solid rgba(26,86,212,0.22)}
+.b-two{background:rgba(214,67,9,0.1);color:#C2410C;border:1px solid rgba(214,67,9,0.22)}
+.b-rs{background:rgba(99,102,241,0.1);color:#4F46E5;border:1px solid rgba(99,102,241,0.2)}
+
+/* ── EDGE VALUES ── */
+.wp{color:#15803D;font-weight:700}
+.wn{color:#DC2626;font-weight:700}
+.wz{color:#94A3B8;font-weight:500}
+
+/* ── GRADE CHIPS ── */
+.gc{width:26px;height:26px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;flex-shrink:0}
+.ga{background:rgba(21,128,61,0.1);color:#15803D;border:1px solid rgba(21,128,61,0.28)}
+.gb{background:rgba(26,86,212,0.1);color:#1A56D4;border:1px solid rgba(26,86,212,0.28)}
+.gc2{background:rgba(214,67,9,0.1);color:#C2410C;border:1px solid rgba(214,67,9,0.28)}
+.gd{background:rgba(220,38,38,0.1);color:#DC2626;border:1px solid rgba(220,38,38,0.28)}
+.grs{background:rgba(99,102,241,0.1);color:#4F46E5;border:1px solid rgba(99,102,241,0.22)}
+
+/* ── FLAGS ── */
+.twoflag{display:inline-block;background:rgba(214,67,9,0.09);color:#C2410C;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;margin-left:4px;vertical-align:middle;border:1px solid rgba(214,67,9,0.22)}
+.ssflag{display:inline-block;background:var(--surface-2);color:var(--muted);padding:1px 6px;border-radius:4px;font-size:10px;font-weight:600;margin-left:4px;vertical-align:middle;border:1px solid var(--border)}
+
+/* ── MISC ── */
+.tw{overflow-x:auto}
+.fg label{display:block;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px}
+.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-bottom:12px}
+
+/* ── INPUTS ── */
+input[type=text],input[type=number],select{width:100%;padding:8px 10px;border:1px solid rgba(0,0,0,0.15);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;color:#111111;background:#FFFFFF}
+input[type=text]:focus,input[type=number]:focus,select:focus{outline:none;border-color:var(--blue-mid);box-shadow:0 0 0 3px rgba(26,86,212,0.1)}
+
+/* ── BUTTONS ── */
+.btn{padding:9px 20px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;text-transform:uppercase;letter-spacing:.6px}
+.btno{background:var(--orange);color:#fff}
+.btnx{background:var(--surface-2);border:1px solid var(--border);color:#111111}
+.ebtn{background:none;border:none;cursor:pointer;color:var(--orange);font-size:12px;font-weight:600;padding:2px 0}
+.ebtn:hover{opacity:.7}
+.erow{display:none}.erow.open{display:table-row}
+
+/* ── DETAIL EXPAND BOXES ── */
+.abox{background:var(--surface-2);border-left:3px solid var(--orange-bright);border-radius:0 6px 6px 0;padding:12px 16px;font-size:12px;line-height:1.85;color:#111111}
+.apt{display:flex;gap:8px;margin-bottom:6px}
+.api{flex-shrink:0;width:20px}
+.yr-badge{margin:8px 0 6px;padding:5px 10px;background:rgba(0,51,160,0.07);border-radius:4px;font-size:10px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.7px;border:1px solid rgba(0,51,160,0.18);display:inline-block}
+
+/* ── DIVIDER ── */
+.div{border:none;border-top:1px solid var(--border);margin:1.5rem 0}
+
+/* ── NOTICES ── */
+.notice{background:rgba(214,103,9,0.06);border:1px solid rgba(214,103,9,0.2);border-radius:6px;padding:10px 14px;font-size:13px;color:#92400E;margin-bottom:1rem}
+.data-note{background:rgba(21,128,61,0.06);border:1px solid rgba(21,128,61,0.2);border-radius:6px;padding:10px 14px;font-size:13px;color:#166534;margin-bottom:1rem}
+.data-warn{background:rgba(214,67,9,0.06);border:1px solid rgba(214,67,9,0.2);border-radius:6px;padding:10px 14px;font-size:13px;color:#9A3412;margin-bottom:1rem}
+
+/* ── ROSTER DECISION CARDS ── */
+.dc{border-radius:var(--r);border:1px solid var(--border);margin-bottom:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+.dh{padding:10px 16px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase}
+.dh.keep{background:rgba(21,128,61,0.08);color:#15803D;border-bottom:1px solid rgba(21,128,61,0.16)}
+.dh.dev{background:rgba(26,86,212,0.08);color:#1A56D4;border-bottom:1px solid rgba(26,86,212,0.16)}
+.dh.risk{background:rgba(220,38,38,0.08);color:#DC2626;border-bottom:1px solid rgba(220,38,38,0.16)}
+.db{padding:0;background:var(--surface)}
+.dp{padding:14px 16px;border-bottom:1px solid var(--border)}
+.dp:last-child{border-bottom:none}
+.dph{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.tag-new{background:rgba(21,128,61,0.1);color:#15803D;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;margin-left:4px;vertical-align:middle;border:1px solid rgba(21,128,61,0.22)}
+
+/* ── NAT AVG / OPP CARDS ── */
+.opp-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:0}
+.opp-name{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--blue-mid)}
+.nat-diff{font-size:11px;padding:2px 7px;border-radius:4px;font-weight:700;margin-left:4px}
+.diff-pos{background:rgba(21,128,61,0.1);color:#15803D}
+.diff-neg{background:rgba(220,38,38,0.1);color:#DC2626}
+.pr{border:1px solid rgba(214,67,9,0.22);border-radius:var(--r);padding:1.25rem;margin-top:1rem;background:rgba(214,67,9,0.04)}
+
+/* ── ABOUT / GLOSSARY ── */
+.ag{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.ab{background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:14px}
+.ab h4{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--blue-mid);margin-bottom:6px}
+.ab p{font-size:13px;line-height:1.65;color:var(--muted)}
+.fm{background:#0F1117;border:1px solid rgba(0,0,0,0.12);border-radius:6px;padding:12px 14px;margin:8px 0;font-family:'Courier New',monospace;font-size:12px;line-height:2.2;color:#A5C0FF}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:1.5rem}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--blue-mid);border-radius:8px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+.stat-card.pit{border-left-color:var(--orange)}
+.stat-card h4{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:#111111;margin-bottom:5px}
+.stat-card .abbr{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:6px;font-family:monospace}
+.stat-card p{font-size:13px;line-height:1.65;color:var(--muted)}
+.stat-card .bench{font-size:11px;background:rgba(26,86,212,0.1);color:var(--blue-mid);padding:2px 8px;border-radius:4px;margin-top:6px;display:inline-block;font-weight:700}
+.as h3{font-family:'Barlow Condensed',sans-serif;font-size:21px;font-weight:700;color:var(--blue-mid);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.as p{line-height:1.75;font-size:14px;margin-bottom:10px;color:var(--muted)}
+@media(max-width:640px){.wrap{padding:1rem}.hdr,.nav{padding:0 1rem}.hdr-r-block{display:none}}
+
+/* ── BUDGET SLIDER ── */
+input[type=range]{width:100%;accent-color:var(--orange-bright);cursor:pointer;margin:6px 0 4px;height:4px}
+.slider-display{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700;color:var(--orange-bright)}
+
+/* ── EDGE COMPONENT BAR ── */
+.edge-bar-wrap{background:var(--surface-2);border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin:10px 0 4px}
+.edge-bar-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.edge-bar-row{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.edge-bar-lbl{width:58px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0}
+.edge-bar-seg{height:12px;border-radius:2px;min-width:2px}
+.edge-bar-num{font-size:11px;font-weight:700;color:#111111;width:44px}
+
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-l">
+    <div class="hdr-logo-block">
+      <div class="bpe-wordmark">
+        <span class="bpe-bronco">BRONCO</span>
+        <span class="bpe-pro">PRO</span>
+        <span class="bpe-edge">EDGE</span>
+      </div>
+    </div>
+    <div class="hdr-info">
+      <div class="hdr-t">Boise State Softball &middot; EDGE Analytics 2026</div>
+      <div class="hdr-s">Through May 2, 2026 &middot; 6-4-3 Charts + NCAA-verified baselines</div>
+    </div>
+  </div>
+  <div class="hdr-r-block">
+    <div class="hdr-record">25-30 &middot; MW 11-14</div>
+  </div>
+</div>
+
+<nav class="nav">
+  <button class="nb active" onclick="switchTab('dashboard',this)">Dashboard</button>
+  <button class="nb" onclick="switchTab('roster',this)">Roster EDGE</button>
+  <button class="nb" onclick="switchTab('pitching',this)">Pitching</button>
+  <button class="nb" onclick="switchTab('budget',this)">Budget</button>
+  <button class="nb" onclick="switchTab('portal',this)">Transfer Portal</button>
+  <button class="nb" onclick="switchTab('national',this)">vs. Top-100 RPI</button>
+  <button class="nb" onclick="switchTab('decisions',this)">Roster Decisions</button>
+  <button class="nb" onclick="switchTab('about',this)">About &amp; Glossary</button>
+</nav>
+
+<div class="wrap">
+
+<!-- DASHBOARD -->
+<div id="tab-dashboard" class="tp active">
+  <div class="metrics" id="dash-metrics"></div>
+  <div class="card">
+    <div class="ct">Roster makeup</div>
+    <div class="cs">Current count vs ideal target by position. Includes returning, redshirt, and incoming players.</div>
+    <div id="roster-makeup"></div>
+  </div>
+  <div class="card">
+    <div class="ct">Full roster EDGE ranking</div>
+    <div class="cs">Every player ranked by EDGE. Top-100 RPI baseline: ERA 3.00, wOBA .360. SS = small sample (&lt;25 PA).</div>
+    <div class="tw"><table>
+      <thead><tr><th>Rank</th><th>Name</th><th>Pos</th><th>Yr</th><th>Total EDGE</th><th>EDGE/400</th><th>Grade</th></tr></thead>
+      <tbody id="dash-war-body"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ROSTER EDGE -->
+<div id="tab-roster" class="tp">
+  <div class="data-note">&#9989; <strong>oEDGE:</strong> wOBA &amp; S/M% from 6-4-3 Charts Apr 26 — highly accurate for 25+ PA. SS = small sample.</div>
+  <div class="data-warn">&#9888; <strong>dEDGE:</strong> Fielding stats from Apr 26 official box score. Directionally correct but approximate. oEDGE is the primary metric.</div>
+  <div class="card">
+    <div class="ct">Position players &mdash; 2026 season EDGE</div>
+    <div class="cs">Click Details for full production breakdown, must-improve areas, year-specific context, trajectory outlook, and portal considerations.</div>
+    <div class="tw"><table>
+      <thead><tr>
+        <th>#</th><th>Name</th><th>Pos</th><th>Yr</th>
+        <th>PA</th><th>AVG</th><th>OBP</th><th>SLG</th><th>wOBA</th><th>S/M%</th><th>HR</th>
+        <th>oEDGE</th><th>dEDGE*</th><th>Total EDGE</th><th>EDGE/400</th><th>Grd</th><th></th>
+      </tr></thead>
+      <tbody id="pos-body"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- PITCHING -->
+<div id="tab-pitching" class="tp">
+  <div class="data-note">&#9989; <strong>pEDGE:</strong> ERA/IP from Apr 26 box score. SO%, BB%, xFIP, SIERA, FIP from 6-4-3 Charts Apr 26 — highly accurate. McNamara hitting EDGE is in Roster tab.</div>
+  <div class="card">
+    <div class="ct">Pitching staff &mdash; 2026 season EDGE</div>
+    <div class="cs">Click Details for full production breakdown, must-improve areas, year-specific context, and roster outlook. pEDGE/100 = rate-normalized over 100 IP.</div>
+    <div class="tw"><table>
+      <thead><tr>
+        <th>#</th><th>Name</th><th>Yr</th><th>W-L</th><th>ERA</th><th>IP</th>
+        <th>SO%</th><th>BB%</th><th>K/BB</th><th>FIP</th><th>xFIP</th><th>SIERA</th><th>WHIP</th>
+        <th>pEDGE</th><th>pEDGE/100</th><th>Grd</th><th></th>
+      </tr></thead>
+      <tbody id="pit-body"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- BUDGET -->
+<div id="tab-budget" class="tp">
+  <div class="card">
+    <div class="ct">Budget settings</div>
+    <div style="max-width:520px">
+      <div class="fg" style="margin-bottom:18px">
+        <label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
+          <span>Total budget</span>
+          <span class="slider-display" id="bTotalDisplay">$100,000</span>
+        </label>
+        <input type="range" id="bTotalSlider" min="10000" max="500000" step="5000" value="100000" oninput="syncBudget(this.value)">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:1px"><span>$10K</span><span>$100K</span><span>$200K</span><span>$300K</span><span>$500K</span></div>
+      </div>
+      <div class="pg" style="max-width:380px">
+        <div class="fg"><label>Floor per active player ($)</label><input type="number" id="bFloor" value="1000" onchange="renderAll()"></div>
+        <div class="fg"><label>Manual budget override ($)</label><input type="number" id="bTotal" value="100000" onchange="syncBudget(this.value)"></div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--muted)">Every active player receives the floor minimum. <strong style="color:var(--text)">Small-sample (SS) players</strong> compete for the variable pool with EDGE scaled by PA÷25 — strong small-sample players can still earn above floor. Redshirt players receive $0.</p>
+  </div>
+  <div class="card">
+    <div class="ct">Full roster &mdash; allocation</div>
+    <div class="tw"><table>
+      <thead><tr><th>Name</th><th>Pos</th><th>Yr</th><th>Role</th><th>Total EDGE</th><th>EDGE share</th><th>Floor</th><th>Allocation</th></tr></thead>
+      <tbody id="bud-body"></tbody>
+      <tfoot><tr style="font-weight:700;background:#1A1A1A;border-top:1px solid rgba(244,121,32,0.35)"><td colspan="7" style="padding:9px 10px;color:#D8D8D8">Total allocated</td><td id="bud-total" style="padding:9px 10px;color:#F47920"></td></tr></tfoot>
+    </table></div>
+  </div>
+</div>
+
+<!-- PORTAL -->
+<div id="tab-portal" class="tp">
+  <div class="card">
+    <div class="ct">Transfer portal comparison</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:1rem">Enter stats from a portal player's 6-4-3 Charts report. EDGE is calculated against the same Top-100 RPI baseline as every BSU player, then ranked against this roster. &#9733; = directly drives EDGE.</p>
+    <div class="pg">
+      <div class="fg"><label>Full name</label><input type="text" id="pName" placeholder="Jane Smith"></div>
+      <div class="fg"><label>Position</label><select id="pPos" onchange="renderRosterMakeup(this.value)"><option>C</option><option>1B</option><option>2B</option><option>3B</option><option>SS</option><option>LF</option><option>CF</option><option>RF</option><option>OF</option><option>UT</option><option>P</option></select></div>
+      <div class="fg"><label>Player type</label><select id="pType" onchange="togglePF()"><option value="pos">Position player</option><option value="pit">Pitcher</option><option value="two">Two-way</option></select></div>
+      <div class="fg"><label>Year</label><select id="pYear"><option>FR</option><option>SO</option><option>JR</option><option>SR</option><option>GR</option></select></div>
+      <div class="fg"><label>Previous school</label><input type="text" id="pSchool" placeholder="University of..."></div>
+    </div>
+    <div id="portal-hit">
+      <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin:10px 0 8px">Hitting stats</div>
+      <div class="pg">
+        <div class="fg"><label>wOBA &#9733;</label><input type="number" id="pWoba" step=".001" placeholder="0.360"></div>
+        <div class="fg"><label>S/M% &#9733;</label><input type="number" id="pSM" step=".1" placeholder="16.0"></div>
+        <div class="fg"><label>HR &#9733;</label><input type="number" id="pHr" placeholder="0"></div>
+        <div class="fg"><label>SB &#9733;</label><input type="number" id="pSb" placeholder="0"></div>
+        <div class="fg"><label>AVG</label><input type="number" id="pAvg" step=".001" placeholder="0.276"></div>
+        <div class="fg"><label>OBP</label><input type="number" id="pObp" step=".001" placeholder="0.334"></div>
+        <div class="fg"><label>SLG</label><input type="number" id="pSlg" step=".001" placeholder="0.396"></div>
+        <div class="fg"><label>PA</label><input type="number" id="pPa" placeholder="150"></div>
+      </div>
+      <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin:10px 0 8px">Defensive stats</div>
+      <div class="pg">
+        <div class="fg"><label>Fielding % &#9733;</label><input type="number" id="pFpct" step=".001" placeholder="0.960"></div>
+        <div class="fg"><label>Putouts &#9733;</label><input type="number" id="pPo" placeholder="0"></div>
+        <div class="fg"><label>Assists &#9733;</label><input type="number" id="pAst" placeholder="0"></div>
+        <div class="fg"><label>Errors</label><input type="number" id="pE" placeholder="0"></div>
+      </div>
+    </div>
+    <div id="portal-pit" style="display:none">
+      <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin:10px 0 8px">Pitching stats</div>
+      <div class="pg">
+        <div class="fg"><label>ERA &#9733;</label><input type="number" id="pEra" step=".01" placeholder="3.00"></div>
+        <div class="fg"><label>IP &#9733;</label><input type="number" id="pIp" step=".1" placeholder="80"></div>
+        <div class="fg"><label>SO% &#9733;</label><input type="number" id="pKpct" step=".1" placeholder="15.0"></div>
+        <div class="fg"><label>BB% &#9733;</label><input type="number" id="pBbpct" step=".1" placeholder="8.0"></div>
+        <div class="fg"><label>xFIP &#9733;</label><input type="number" id="pXfip" step=".01" placeholder="3.00"></div>
+        <div class="fg"><label>WHIP &#9733;</label><input type="number" id="pWhip" step=".01" placeholder="1.40"></div>
+        <div class="fg"><label>Wins &#9733;</label><input type="number" id="pWins" placeholder="0"></div>
+        <div class="fg"><label>FIP</label><input type="number" id="pFip" step=".01" placeholder="3.00"></div>
+        <div class="fg"><label>SIERA</label><input type="number" id="pSiera" step=".01" placeholder="4.00"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+      <button class="btn btno" onclick="runPortal()">Calculate EDGE &amp; rank &rarr;</button>
+      <button class="btn btnx" onclick="clearPortal()">Clear</button>
+    </div>
+  </div>
+  <div id="portalResult"></div>
+  <div class="card">
+    <div class="ct">Portal players this session</div>
+    <div class="tw"><table>
+      <thead><tr><th>Name</th><th>Pos</th><th>School</th><th>wOBA</th><th>S/M%</th><th>EDGE</th><th>BSU rank</th><th>Allocation</th><th>Grade</th><th></th></tr></thead>
+      <tbody id="portalList"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- NATIONAL -->
+<div id="tab-national" class="tp">
+  <div class="data-note">&#128203; <strong>Top-100 RPI baselines.</strong> ERA 3.00, wOBA .360 reflect weighted averages of Top-100 NCAA RPI programs (power conference + upper mid-major). Edit any field to recalculate instantly.</div>
+  <div class="card">
+    <div class="ct">Hitting benchmarks <span style="font-size:12px;font-weight:400;color:var(--muted);text-transform:none">(&#9733; directly affects EDGE)</span></div>
+    <div class="pg">
+      <div class="fg"><label>wOBA &#9733;</label><input type="number" id="nWoba" step=".001" value="0.360" onchange="renderNat()"></div>
+      <div class="fg"><label>S/M% &#9733;</label><input type="number" id="nSM" step=".1" value="16.0" onchange="renderNat()"></div>
+      <div class="fg"><label>AVG</label><input type="number" id="nAvg" step=".001" value="0.291" onchange="renderNat()"></div>
+      <div class="fg"><label>SLG</label><input type="number" id="nSlg" step=".001" value="0.445" onchange="renderNat()"></div>
+      <div class="fg"><label>OBP</label><input type="number" id="nObp" step=".001" value="0.375" onchange="renderNat()"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Pitching benchmarks <span style="font-size:12px;font-weight:400;color:var(--muted);text-transform:none">(&#9733; directly affects EDGE)</span></div>
+    <div class="pg">
+      <div class="fg"><label>ERA &#9733;</label><input type="number" id="nEra" step=".01" value="3.00" onchange="renderNat()"></div>
+      <div class="fg"><label>xFIP &#9733;</label><input type="number" id="nXfip" step=".01" value="3.00" onchange="renderNat()"></div>
+      <div class="fg"><label>SO% &#9733;</label><input type="number" id="nKpct" step=".1" value="15.0" onchange="renderNat()"></div>
+      <div class="fg"><label>BB% &#9733;</label><input type="number" id="nBbpct" step=".1" value="8.0" onchange="renderNat()"></div>
+      <div class="fg"><label>FLD%</label><input type="number" id="nFld" step=".0001" value="0.968" onchange="renderNat()"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Hitter comparison vs Top-100 RPI average</div>
+    <div class="tw"><table>
+      <thead><tr><th>Name</th><th>Pos</th><th>Yr</th><th>wOBA</th><th>vs T100</th><th>S/M%</th><th>vs T100</th><th>AVG</th><th>vs T100</th><th>SLG</th><th>vs T100</th></tr></thead>
+      <tbody id="nat-hit-body"></tbody>
+    </table></div>
+  </div>
+  <div class="card">
+    <div class="ct">Pitcher comparison vs Top-100 RPI average</div>
+    <div class="tw"><table>
+      <thead><tr><th>Name</th><th>ERA</th><th>vs T100</th><th>xFIP</th><th>vs T100</th><th>SO%</th><th>vs T100</th><th>BB%</th><th>vs T100</th><th>WHIP</th></tr></thead>
+      <tbody id="nat-pit-body"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- DECISIONS -->
+<div id="tab-decisions" class="tp">
+  <div id="dec-body"></div>
+</div>
+
+<!-- ABOUT -->
+<div id="tab-about" class="tp">
+  <div class="card">
+    <div class="as">
+      <h3>What is this model?</h3>
+      <p>This is a custom <strong>Bronco EDGE Score</strong> model built for Boise State softball. It converts every player's statistics into a single number — how many wins they add above a Top-100 RPI-level athlete — then connects that directly to the revenue sharing budget.</p>
+      <p>A <strong>baseline player</strong> is set at Top-100 RPI average performance — the standard BSU competes to exceed every season. EDGE of 0.0 = that level exactly. Positive EDGE = above it. Negative EDGE = below it.</p>
+      <p><strong>Top-100 RPI baselines</strong> are weighted averages of power conference and upper mid-major programs: ERA 3.00, wOBA .360, FLD% .968, SO% 15.0%, BB% 8.0%. These reflect the competition level BSU targets as a Top-100 program.</p>
+      <p><strong>EDGE is a starting point, not a verdict.</strong> It does not capture leadership, injury trajectory, academics, or team chemistry — all of which matter in real decisions.</p>
+    </div>
+    <hr class="div">
+    <div class="as">
+      <h3>Stat glossary</h3>
+      <div class="stat-grid">
+        <div class="stat-card"><h4>wOBA</h4><div class="abbr">Weighted On-Base Average</div><p>The best single offensive metric. Weights each outcome by actual run value — HR worth more than 2B, 2B more than 1B, 1B more than BB. Scale mirrors OBP: .360 = Top-100 RPI average, .390+ = good, .430+ = elite.</p><span class="bench">Top-100 RPI avg ≈ .360</span></div>
+        <div class="stat-card"><h4>S/M%</h4><div class="abbr">Swing &amp; Miss Rate</div><p>% of swings that completely miss the ball. Lower is better for hitters. Top-100 RPI hitter threshold is 16%. Hitters above 16% receive a small EDGE penalty. For pitchers, higher S/M means more swing-and-miss ability.</p><span class="bench">Top-100 RPI threshold = 16%</span></div>
+        <div class="stat-card"><h4>ERA</h4><div class="abbr">Earned Run Average (per 7 innings)</div><p>Most familiar pitching stat but influenced heavily by defense and luck. Use xFIP and SIERA for true skill. Top-100 RPI programs average ERA of 3.00, reflecting elite pitching staffs.</p><span class="bench">Top-100 RPI avg = 3.00</span></div>
+        <div class="stat-card pit"><h4>xFIP</h4><div class="abbr">Expected Fielding Independent Pitching</div><p>Luck-neutral ERA estimator. Removes defense, adjusts HR using fly ball rate. When xFIP is well below ERA, the pitcher has been unlucky and should improve. Primary ERA estimator in pEDGE.</p><span class="bench">Top-100 RPI avg ≈ 3.00</span></div>
+        <div class="stat-card pit"><h4>SIERA</h4><div class="abbr">Skill-Interactive ERA</div><p>The most complete ERA estimator — accounts for K%, BB%, and batted ball profile together. When SIERA and xFIP differ, SIERA is generally the better long-term predictor.</p></div>
+        <div class="stat-card pit"><h4>SO% / BB%</h4><div class="abbr">Strikeout &amp; Walk Rate per Batter</div><p>Rate-based — fairer than raw totals because they adjust for batters faced. SO% above 15.0% is rewarded in pEDGE; BB% above 8% is penalized. These are the primary pitching skill metrics.</p><span class="bench">Top-100 RPI avg: SO% 15.0%, BB% 8.0%</span></div>
+        <div class="stat-card pit"><h4>FIP</h4><div class="abbr">Fielding Independent Pitching</div><p>ERA estimator using only strikeouts, walks, and HR — outcomes fully controlled by the pitcher. FIP higher than xFIP = pitcher gave up HR at above-average rate (often luck). FIP lower than ERA = defense hurt her.</p></div>
+        <div class="stat-card pit"><h4>WHIP</h4><div class="abbr">Walks + Hits per IP</div><p>Baserunners allowed per inning. 1.00 = elite, 1.40 = average, 1.75+ = struggling. Measures command and contact management. Included as a penalty component in pEDGE.</p></div>
+        <div class="stat-card"><h4>oEDGE / dEDGE / pEDGE</h4><div class="abbr">EDGE Components</div><p>oEDGE = offensive value. dEDGE = defensive value (estimated from box score — treat as approximate). pEDGE = pitching value. Two-way players earn both hitting and pitching EDGE. Total EDGE = all components combined.</p></div>
+        <div class="stat-card"><h4>EDGE/400 &amp; pEDGE/100</h4><div class="abbr">Rate-Normalized EDGE</div><p>Projects to a common standard for fair comparison: 400 PA for hitters, 100 IP for pitchers. Use rate for evaluation and player comparisons. Use raw EDGE for budget allocation.</p></div>
+      </div>
+    </div>
+    <hr class="div">
+    <div class="as">
+      <h3>EDGE formulas &amp; baselines</h3>
+      <div class="ag">
+        <div class="ab"><h4>Offensive EDGE</h4><div class="fm">oEDGE = (wOBA − 0.360)/0.360 × 5.0<br>+ HR × 0.12 + SB × 0.05<br>− max(0, S/M% − 16) × 0.015</div><p>Baseline .360 = Top-100 RPI average. S/M% penalty applies only above Top-100 threshold (16%).</p></div>
+        <div class="ab"><h4>Defensive EDGE</h4><div class="fm">dEDGE = (fld% − .968)/.040 × 1.5<br>+ (PO + AST)/200 × pos_mult<br>(excluded if 0 chances)</div><p>Fielding baseline .968 = Top-100 RPI average. Zero-chance players excluded from fielding% component to prevent bugs.</p></div>
+        <div class="ab"><h4>Pitching EDGE</h4><div class="fm">pEDGE = (3.00−ERA)/3.00 × IP/55 × 3.0<br>+ (SO%−15.0) × 0.07<br>− (BB%−8.0) × 0.07<br>+ (3.00−xFIP)/3.00 × 1.2<br>+ W × 0.15 − WHIP × 0.4</div><p>ERA and xFIP baselines set to 3.00 — Top-100 RPI weighted average for elite D1 programs.</p></div>
+        <div class="ab"><h4>Budget formula</h4><div class="fm">EDGE/400 = (Total EDGE / PA) × 400<br>pEDGE/100 = (pEDGE / IP) × 100<br><br>effEDGE = EDGE × (PA/25)  [SS only]<br>         = EDGE           [all others]<br><br>alloc = floor<br>+ (max(effEDGE,0)/Σeffpool)<br>× (budget − floor × n)</div><p>Every active player gets the floor. Redshirt = $0. <strong style="color:var(--text)">SS players</strong> (under 25 PA) compete for the variable pool with EDGE scaled by PA÷25 — they can still earn above floor if their scaled EDGE is positive. Remaining pool splits by effective EDGE share.</p></div>
+      </div>
+    </div>
+    <hr class="div">
+    <div class="as">
+      <h3>Year-in-school framework</h3>
+      <p>EDGE is always evaluated in the context of a player's year in school. A Grade D freshman is a completely different situation than a Grade D senior. The model applies this framework in every player's Details panel and in the Roster Decisions tab.</p>
+      <div class="ag">
+        <div class="ab"><h4>FR — Freshman: Developmental piece</h4><p>EDGE is informational, not a verdict. The question is ceiling and trajectory, not current output. 3 years of development runway remain. Evaluate tools and trend, not just the number.</p></div>
+        <div class="ab"><h4>SO — Sophomore: Proving ground</h4><p>Year 1 adjustment is behind her. Year 2 production starts revealing whether the tools translate to sustained D1 performance. Yellow flags warrant attention; red flags require a plan.</p></div>
+        <div class="ab"><h4>JR — Junior: Production window is now</h4><p>Peak development window. EDGE reflects what this player is. Strong production = core piece, start planning her replacement pipeline now. Below replacement = honest evaluation needed.</p></div>
+        <div class="ab"><h4>SR/GR — Senior: Final season</h4><p>EDGE is the complete picture. Roster management focus shifts to what must be replaced. Below-replacement seniors departing can actually be roster upgrade opportunities.</p></div>
+      </div>
+    </div>
+    <hr class="div">
+    <div class="as">
+      <h3>Positional multipliers &amp; grading</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:8px;margin-bottom:1.2rem">
+        <div style="background:#1A1A1A;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:10px 12px;font-size:13px;color:#D8D8D8"><strong>SS 1.25×</strong> — hardest to replace</div>
+        <div style="background:#1A1A1A;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:10px 12px;font-size:13px;color:#D8D8D8"><strong>C 1.20×</strong> — unique demand</div>
+        <div style="background:#1A1A1A;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:10px 12px;font-size:13px;color:#D8D8D8"><strong>2B/3B 1.10×</strong></div>
+        <div style="background:#1A1A1A;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:10px 12px;font-size:13px;color:#D8D8D8"><strong>CF 1.00×</strong></div>
+        <div style="background:#1A1A1A;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:10px 12px;font-size:13px;color:#D8D8D8"><strong>OF 0.90×</strong></div>
+        <div style="background:#1A1A1A;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:10px 12px;font-size:13px;color:#D8D8D8"><strong>LF/RF 0.85×</strong></div>
+        <div style="background:#1A1A1A;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:10px 12px;font-size:13px;color:#D8D8D8"><strong>1B/UT 0.80×</strong></div>
+      </div>
+      <div class="ag">
+        <div class="ab"><h4>Grade A — Elite (EDGE ≥ 2.5)</h4><p>Top-tier D1 contributor. Highest retention priority. Premium allocation. Generates significant portal interest from other programs.</p></div>
+        <div class="ab"><h4>Grade B — Above average (EDGE 1.0–2.5)</h4><p>Consistent above-replacement contributor. Core roster piece worth continued investment.</p></div>
+        <div class="ab"><h4>Grade C — Average/developing (EDGE 0–1.0)</h4><p>At or slightly above replacement. Monitor trends. Development could push to Grade B.</p></div>
+        <div class="ab"><h4>Grade D — Below replacement (EDGE &lt; 0)</h4><p>Below freely available replacement level. Evaluate alternatives. Small-sample Grade D (&lt;25 PA) should be weighted lightly.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</div><!-- /wrap -->
+
+<script>
+// ====== CONSTANTS (Top-100 RPI verified) ======
+var LEAGUE_ERA=3.00,LEAGUE_XFIP=3.00,LEAGUE_WOBA=0.360,LEAGUE_FLD=0.968;
+var ROSTER_IDEAL={P:6,C:4,'1B':1,'2B':2,SS:2,'3B':1,RF:2,CF:2,LF:2};
+var OF_KEYS=['RF','CF','LF','OF'];
+function getRosterCounts(){
+  var counts={P:0,C:0,'1B':0,'2B':0,SS:0,'3B':0,RF:0,CF:0,LF:0,OF:0,UT:0};
+  posPlayers.forEach(function(p){if(counts.hasOwnProperty(p.pos)) counts[p.pos]++;});
+  pitchers.forEach(function(p){if(!p.twoWay) counts['P']++;});
+  return counts;
+}
+function renderRosterMakeup(previewPos){
+  var el=document.getElementById('roster-makeup');
+  if(!el) return;
+  var counts=getRosterCounts();
+  var defs=[
+    {key:'P',label:'Pitchers'},{key:'C',label:'Catchers'},{key:'1B',label:'1st Base'},
+    {key:'2B',label:'2nd Base'},{key:'SS',label:'Shortstop'},{key:'3B',label:'3rd Base'},
+    {key:'RF',label:'Right Field'},{key:'CF',label:'Center Field'},{key:'LF',label:'Left Field'}
+  ];
+  var html='<div class="roster-grid">';
+  if(previewPos){
+    html+='<div style="grid-column:1/-1;font-size:11px;color:var(--orange-bright);font-weight:700;padding:4px 0 2px">⬡ PREVIEW: +1 '+previewPos+' if portal player added</div>';
+  }
+  defs.forEach(function(d){
+    var cur=counts[d.key]||0,ideal=ROSTER_IDEAL[d.key]||0;
+    var isPreview=previewPos===d.key;
+    var disp=isPreview?cur+1:cur;
+    var diff=disp-ideal;
+    var cls=diff===0?'ok':diff>0?'over':'under';
+    var st=diff===0?'<span style="color:#10B981">✓ Ideal</span>':
+      diff>0?'<span style="color:#f59e0b">+'+diff+' Over</span>':
+      '<span style="color:#dc2626">'+diff+' Need</span>';
+    var pb=isPreview?'<div class="ppreview">+1 portal</div>':'';
+    html+='<div class="pos-tile '+cls+(isPreview?' ptile-preview':'')+'"><h5>'+d.label+'</h5><div class="pcount">'+disp+'</div><div class="pideal">Ideal: '+ideal+'</div><div class="pstatus">'+st+'</div>'+pb+'</div>';
+  });
+  var ofT=OF_KEYS.reduce(function(s,k){return s+(counts[k]||0);},0);
+  var ofPreview=OF_KEYS.indexOf(previewPos)>-1;
+  var ofDisp=ofPreview?ofT+1:ofT;
+  var ofD=ofDisp-6,ofCls=ofD===0?'ok':ofD>0?'over':'under';
+  var ofSt=ofD===0?'<span style="color:#10B981">✓ Ideal</span>':ofD>0?'<span style="color:#f59e0b">+'+ofD+' Over</span>':'<span style="color:#dc2626">'+ofD+' Need</span>';
+  var ofPb=ofPreview?'<div class="ppreview">+1 portal</div>':'';
+  html+='<div class="pos-tile '+ofCls+(ofPreview?' ptile-preview':'')+'" style="border-top:2px solid var(--border);grid-column:1/-1"><h5>OF Total (RF+CF+LF)</h5><div style="display:flex;align-items:center;justify-content:center;gap:16px"><div class="pcount">'+ofDisp+'</div></div><div class="pideal">Ideal: 6</div><div class="pstatus">'+ofSt+'</div>'+ofPb+'</div></div>';
+  el.innerHTML=html;
+}
+var POS_W={C:1.2,'1B':0.8,'2B':1.1,'3B':1.1,'SS':1.25,'LF':0.85,'CF':1.0,'RF':0.85,'OF':0.9,'IF':0.85,'UT':0.8,'P':0.6};
+var MIN_PA=25;
+
+// ====== BSU ROSTER — May 8, 2026 ======
+var posPlayers=[
+  // Returning players
+  {num:7,  name:'Penberthy, Kate',    pos:'3B',yr:'JR',pa:184,avg:.361,obp:.446,slg:.710,woba:.506,sm:14,hr:13,sb:0, po:306,ast:27,e:4,  fpct:.988},
+  {num:58, name:'Flindt, Mya',        pos:'C', yr:'SO',pa:160,avg:.285,obp:.419,slg:.638,woba:.466,sm:16,hr:14,sb:0, po:73, ast:8, e:1,  fpct:.988},
+  {num:99, name:'Romero, Sophia',     pos:'RF',yr:'SO',pa:124,avg:.336,obp:.367,slg:.451,woba:.371,sm:16,hr:2, sb:1, po:35, ast:0, e:2,  fpct:.946},
+  {num:14, name:'Southerland, Quinn', pos:'CF',yr:'SO',pa:177,avg:.316,obp:.394,slg:.428,woba:.379,sm:10,hr:2, sb:7, po:74, ast:3, e:3,  fpct:.963},
+  {num:55, name:'Crider, Jorja',      pos:'1B',yr:'SO',pa:97, avg:.171,obp:.375,slg:.414,woba:.368,sm:21,hr:4, sb:1, po:63, ast:1, e:1,  fpct:.985},
+  {num:19, name:'Stroh, Skylar',      pos:'2B',yr:'JR',pa:195,avg:.303,obp:.335,slg:.478,woba:.367,sm:13,hr:6, sb:2, po:97, ast:101,e:8, fpct:.961},
+  {num:11, name:'McNamara, LoulaRae', pos:'P', yr:'FR',pa:28, avg:.222,obp:.250,slg:.222,woba:.219,sm:0, hr:0, sb:0, po:4,  ast:30,e:0,  fpct:1.000,twoWay:true},
+  {num:15, name:'Vieira, Kaylee',     pos:'RF',yr:'JR',pa:56, avg:.235,obp:.304,slg:.412,woba:.329,sm:26,hr:2, sb:0, po:5,  ast:0, e:2,  fpct:.714},
+  {num:3,  name:'Jenkins, Talia',     pos:'C', yr:'SO',pa:95, avg:.194,obp:.356,slg:.224,woba:.291,sm:23,hr:0, sb:0, po:169,ast:19,e:2,  fpct:.989},
+  {num:12, name:'Peffley, Grace',     pos:'CF',yr:'FR',pa:29, avg:.214,obp:.241,slg:.250,woba:.229,sm:13,hr:0, sb:3, po:15, ast:2, e:2,  fpct:.895},
+  {num:56, name:'Galasso, Kaitlyn',   pos:'2B',yr:'FR',pa:20, avg:.150,obp:.150,slg:.150,woba:.136,sm:26,hr:0, sb:1, po:3,  ast:5, e:0,  fpct:1.000},
+  {num:13, name:'Flindt, Alyssa',     pos:'SS',yr:'FR',pa:23, avg:.150,obp:.217,slg:.150,woba:.180,sm:43,hr:0, sb:0, po:7,  ast:34,e:1,  fpct:.976},
+  {num:24, name:'Riley, Rustie',      pos:'C', yr:'FR',pa:24, avg:.143,obp:.250,slg:.143,woba:.201,sm:15,hr:0, sb:0, po:23, ast:1, e:0,  fpct:1.000},
+  {num:10, name:'Hodge, Molly',       pos:'LF',yr:'FR',pa:15, avg:.071,obp:.133,slg:.071,woba:.107,sm:35,hr:0, sb:0, po:0,  ast:0, e:0,  fpct:null},
+  {num:20, name:'Shorter, Tamryn',    pos:'CF',yr:'SO',redshirt:true,pa:0},
+  // 2026 incoming freshmen
+  {num:0,  name:'Peters, Saige',      pos:'LF',yr:'FR',incoming:true,pa:0},
+  {num:0,  name:'Atwood, Kendall',    pos:'CF',yr:'FR',incoming:true,pa:0},
+  {num:0,  name:'Banks, Tanner',      pos:'C', yr:'FR',incoming:true,pa:0},
+  {num:0,  name:'Owens, Adyson',      pos:'C', yr:'FR',incoming:true,pa:0}
+];
+
+// Pitchers — May 8, 2026 · ERA/IP/W-L/BB/SO confirmed from 2026 PDF; xFIP/FIP/SIERA from 6-4-3 Charts
+var pitchers=[
+  {num:11,name:'McNamara, LoulaRae',yr:'FR',wl:'8-6', era:3.65,ip:103.2,so:83,bb:41,whip:1.43,wins:8, kPct:18,bbPct:9, fip:3.70,xfip:2.07,siera:3.89,twoWay:true},
+  {num:1, name:'Duran, Charley',    yr:'FR',wl:'5-5', era:4.36,ip:51.1, so:37,bb:44,whip:1.92,wins:5, kPct:15,bbPct:18,fip:5.38,xfip:3.86,siera:5.77},
+  {num:5, name:'Bauer, Olivia',     yr:'SO',wl:'1-8', era:5.91,ip:64.0, so:19,bb:36,whip:2.09,wins:1, kPct:6, bbPct:11,fip:5.66,xfip:3.81,siera:4.52},
+  {num:43,name:'Crabtree, Kodi',    yr:'FR',wl:'2-1', era:5.70,ip:27.0, so:16,bb:20,whip:1.44,wins:2, kPct:13,bbPct:16,fip:6.41,xfip:3.99,siera:6.51},
+  {num:27,name:'Keighran, Shannon', yr:'SO',wl:'0-0', era:10.08,ip:8.1, so:3, bb:8, whip:2.84,wins:0, kPct:6, bbPct:15,fip:10.64,xfip:5.99,siera:7.19},
+  {num:0, name:'Botticelli, Mimi',  yr:'FR',incoming:true,wl:'0-0',era:0,ip:0,so:0,bb:0,whip:0,wins:0,kPct:0,bbPct:0,fip:0,xfip:0,siera:0}
+];
+
+var portalPlayers=[];
+
+// ====== EDGE FORMULAS ======
+function calcOEDGE(p){
+  if(p.redshirt||!p.pa||p.pa<5) return 0;
+  var w=(p.woba-LEAGUE_WOBA)/LEAGUE_WOBA*5.0+(p.hr||0)*0.12+(p.sb||0)*0.05;
+  if(p.sm>16) w-=(p.sm-16)*0.015;
+  return Math.round(w*100)/100;
+}
+function calcDEDGE(p){
+  if(p.redshirt||!p.pa||p.pa<10) return 0;
+  var tc=(p.po||0)+(p.ast||0)+(p.e||0);
+  var fBase=(tc>0&&p.fpct!==null&&p.fpct!==undefined)?((p.fpct-LEAGUE_FLD)/0.040*1.5):0;
+  var vol=((p.po||0)+(p.ast||0))/200;
+  return Math.round((fBase+vol)*(POS_W[p.pos]||1.0)*100)/100;
+}
+function calcPEDGE(p){
+  if(!p.ip||p.ip<1) return 0;
+  var w=(LEAGUE_ERA-p.era)/LEAGUE_ERA*(p.ip/55)*3.0;
+  w+=(p.kPct-15.0)*0.07-(p.bbPct-8.0)*0.07;
+  w+=(LEAGUE_XFIP-p.xfip)/LEAGUE_XFIP*1.2+(p.wins||0)*0.15-(p.whip||1.4)*0.4;
+  return Math.round(w*100)/100;
+}
+function buildData(){
+  var pitMap={};
+  pitchers.forEach(function(x){pitMap[x.num]=x;});
+  var pd=posPlayers.map(function(p){
+    if(p.incoming) return Object.assign({},p,{oEDGE:0,dEDGE:0,pEDGE:0,total:0,type:'inc'});
+    if(p.redshirt) return Object.assign({},p,{oEDGE:0,dEDGE:0,pEDGE:0,total:0,type:'rs'});
+    var oEDGE=calcOEDGE(p),dEDGE=calcDEDGE(p),pEDGE=0;
+    if(p.twoWay&&pitMap[p.num]) pEDGE=calcPEDGE(pitMap[p.num]);
+    return Object.assign({},p,{oEDGE:oEDGE,dEDGE:dEDGE,pEDGE:pEDGE,total:Math.round((oEDGE+dEDGE+pEDGE)*100)/100,type:p.twoWay?'two':'pos'});
+  });
+  var pitd=pitchers.filter(function(p){return !p.twoWay;}).map(function(p){
+    if(p.incoming) return Object.assign({},p,{oEDGE:0,dEDGE:0,pEDGE:0,total:0,type:'inc',pos:'P'});
+    var pEDGE=calcPEDGE(p);
+    return Object.assign({},p,{oEDGE:0,dEDGE:0,pEDGE:pEDGE,total:pEDGE,type:'pit',pos:'P'});
+  });
+  return {pd:pd,pitd:pitd,all:pd.concat(pitd)};
+}
+function getAlloc(w,tot,budget,floor,n){
+  return Math.round(floor+Math.max(w,0)/Math.max(tot,0.01)*Math.max(budget-floor*n,0));
+}
+function fmtEDGE(v){
+  if(v===0) return '<span class="wz">0.00</span>';
+  return '<span class="'+(v>0.5?'wp':v<-0.3?'wn':'wz')+'">'+(v>0?'+':'')+v.toFixed(2)+'</span>';
+}
+function gradeObj(w){
+  if(w>=2.5) return {g:'A',c:'ga'};
+  if(w>=1.0) return {g:'B',c:'gb'};
+  if(w>=0)   return {g:'C',c:'gc2'};
+  return {g:'D',c:'gd'};
+}
+function ss(pa){return pa>0&&pa<MIN_PA;}
+// Effective EDGE for budget variable pool: SS players scaled by PA/MIN_PA
+function effEDGE(p){
+  if(p.redshirt||!p.pa||!ss(p.pa)) return p.total;
+  return Math.round(p.total*(p.pa/MIN_PA)*100)/100;
+}
+// EDGE component bar chart
+function buildEdgeBar(oE,dE,pE){
+  var maxVal=Math.max(Math.abs(oE),Math.abs(dE),Math.abs(pE),0.5);
+  var W=200;
+  function seg(val,color,lbl){
+    var w=Math.min(Math.round(Math.abs(val)/maxVal*W),W);
+    if(w<2&&val!==0) w=2;
+    return '<div class="edge-bar-row">'+
+      '<div class="edge-bar-lbl">'+lbl+'</div>'+
+      '<div class="edge-bar-seg" style="width:'+w+'px;background:'+(val>=0?color:'var(--red)')+'"></div>'+
+      '<div class="edge-bar-num">'+(val>0?'+':'')+val.toFixed(2)+'</div>'+
+    '</div>';
+  }
+  var rows=seg(oE,'var(--blue-mid)','oEDGE');
+  if(dE!==0) rows+=seg(dE,'var(--orange-bright)','dEDGE');
+  if(pE!==0) rows+=seg(pE,'#A5B4FC','pEDGE');
+  return '<div class="edge-bar-wrap"><div class="edge-bar-title">EDGE breakdown</div>'+rows+'</div>';
+}
+// Budget slider sync
+function syncBudget(val){
+  var v=Math.max(10000,Math.min(500000,parseFloat(val)||100000));
+  var bTotal=document.getElementById('bTotal');
+  var bSlider=document.getElementById('bTotalSlider');
+  var bDisp=document.getElementById('bTotalDisplay');
+  if(bTotal) bTotal.value=v;
+  if(bSlider) bSlider.value=v;
+  if(bDisp) bDisp.textContent='$'+v.toLocaleString();
+  renderAll();
+}
+function diffBadge(val,avg,lowerBetter,pct){
+  var d=val-avg,better=lowerBetter?(d<0):(d>0);
+  var cls=better?'diff-pos':'diff-neg';
+  var s=(d>=0?'+':'')+d.toFixed(pct?1:3)+(pct?'%':'');
+  return '<span class="nat-diff '+cls+'">'+s+'</span>';
+}
+
+// ====== YEAR-CONTEXT ENGINE ======
+function yearContext(yr,war,pos){
+  var isFR=yr==='FR',isSO=yr==='SO',isJR=yr==='JR',isSR=(yr==='SR'||yr==='GR');
+  var above=war>=1.0,avg=war>=0,below=war<0;
+  var r={};
+  if(isFR){
+    r.label='🟡 Freshman — Developmental piece (3 years remaining)';
+    r.yearNote='As a freshman, EDGE is informational — not a verdict. Ceiling and trajectory matter more than current output. Year 1 is the adjustment year for most D1 athletes.';
+    r.trajectory=above?'Producing at above-average level as a freshman is exceptional. This is a program cornerstone in the making.':avg?'Performing at or near replacement level as a freshman is a positive sign — the baseline is being met in year one.':'Below replacement as a freshman is common and expected. The question is whether the tools are present and trending in the right direction week over week.';
+    r.future=above?'3 years of development runway remain. Begin planning expanded role for year 2. She is the future of this program.':avg?'Provide consistent reps and a clear development plan for year 2. The trajectory is the only number that matters right now.':'Do not make roster decisions based on freshman-year EDGE alone. Evaluate underlying tools — S/M% trend, contact quality, mechanical improvements.';
+    r.portal=above?'Monitor for portal risk. Elite freshmen attract power-conference interest. Relationship investment is the retention tool.':avg?'Low immediate portal risk. Focus on development environment.':'No action needed. Reassess with full-year data.';
+  } else if(isSO){
+    r.label='🟠 Sophomore — Proving ground (2 years remaining)';
+    r.yearNote='Year 1 adjustment is behind her. Sophomore production starts revealing whether the tools translate to sustained D1 performance.';
+    r.trajectory=above?'Above-average production in year 2 confirms the freshman promise was real. She is establishing herself as a core piece.':avg?'Replacement-level in year 2 is a yellow flag — not a red one. She has shown she can compete at D1 but has not separated from replacement level yet.':'Below replacement in year 2 is a more meaningful signal than year 1. If underlying metrics are not improving from freshman year, the gap is real.';
+    r.future=above?'2 years remain. Plan for expanded role and begin recruiting around her continued presence.':avg?'2 years remain. The offseason development plan becomes critical. Evaluate whether trajectory is improving enough to project as a contributor in years 3-4.':'An honest evaluation is needed now rather than at the end of junior year when options are limited.';
+    r.portal=above?'Moderate portal risk. Sophomore standouts attract transfer offers. Proactive retention conversation is key.':avg?'Evaluate portal depth at her position as a contingency.':'Begin scouting portal options at this position for the following season.';
+  } else if(isJR){
+    r.label='🔵 Junior — Production window is now (1 year remaining after this)';
+    r.yearNote='Junior year is when D1 athletes are expected to be at or near peak contribution. The development runway has been used. What you see now is a strong signal of what this player is.';
+    r.trajectory=above?'Above-average production as a junior confirms the investment paid off. She is a proven contributor in her prime window.':avg?'Replacement-level in the junior year means the trajectory has plateaued. The ceiling is now visible.':'Below replacement as a junior is a significant roster management signal. Three years of development have not produced above-replacement performance.';
+    r.future=above?'1 year of eligibility remains after this season. The most urgent question: what is the plan to replace her production? Recruiting and portal work at her position must start NOW — not next year.':avg?'Plan for a complementary role in year 4. Prioritize portal or recruiting to upgrade this position.':'The program must decide: is there a specific value-add role as a senior, or is the roster spot better allocated to a portal or recruiting addition?';
+    r.portal=above?'HIGH portal risk from other programs. If she has any unresolved concerns, this is the window she may leave. Proactive retention conversation is essential.':avg?'Assess whether a portal addition could upgrade this roster spot for next season.':'Actively scout portal options at this position. Consider whether a difficult but necessary roster conversation is warranted.';
+  } else {
+    r.label='🔴 Senior/Grad — Final season';
+    r.yearNote='Final year. EDGE is the complete picture of this player\'s contribution. Roster management focus now shifts entirely to what must be replaced.';
+    r.trajectory=above?'An above-average senior is invaluable — proven, experienced, and producing at her peak. Extract maximum value from this season.':avg?'Contributing at replacement level in her final year. She has been a reliable piece of the roster.':'Below replacement in her final season. Her departure is an opportunity to upgrade this roster spot.';
+    r.future=above?'She will not be back. This is a confirmed, urgent portal or recruiting need — who takes her innings/at-bats next year? Do not wait until the offseason to ask this question.':avg?'Her departure is a manageable transition. Still plan the replacement explicitly.':'This is an offseason upgrade target. Replacing below-replacement production with even an average portal addition is a net positive.';
+    r.portal='No portal risk from her. Manage the outgoing EDGE gap proactively.';
+  }
+  return r;
+}
+
+function pitYearContext(yr,war){
+  var isFR=yr==='FR',isSO=yr==='SO',isJR=yr==='JR',isSR=(yr==='SR'||yr==='GR');
+  var above=war>=1.0;
+  var r={};
+  if(isFR){
+    r.label='🟡 Freshman pitcher — Developmental timeline (3 years remaining)';
+    r.yearNote=above?'Elite production as a freshman pitcher is rare. If xFIP and SIERA are strong, the production is real. She has a long runway to become a program-defining arm.':'Freshman pitchers take time to develop command, pitch mix, and D1 deception. Below-expectation EDGE in year 1 is common. Focus on BB% reduction and K/BB ratio trend — not ERA alone.';
+    r.trajectory=above?'Production trend is ahead of schedule. Watch workload carefully — her long-term health is more valuable than any single-season ERA.':'Track BB% week-over-week. Downward trend in walk rate is the strongest signal of future success for a freshman arm.';
+    r.future=above?'3 years of development remain. Manage workload carefully to protect long-term health. She is the future of the staff.':'3 years of runway remain. Evaluate xFIP and SIERA trajectory — a freshman who improves command annually is on exactly the right path.';
+  } else if(isSO){
+    r.label='🟠 Sophomore pitcher — Command maturation year (2 years remaining)';
+    r.yearNote=above?'Above-average production in year 2 confirms the freshman promise. Command is maturing.':'Sophomore year is when command issues either resolve or entrench. Monitor BB% trend carefully — it is the most predictive indicator of future performance.';
+    r.trajectory=above?'Year-2 production confirms the talent is translating. Begin planning for a larger role in year 3.':'Compare BB% to year 1. If it has not improved, the command concern is real and needs an off-season plan.';
+    r.future=above?'Plan for expanded role as a junior — more IP, higher-leverage situations.':'If BB% has not improved from year 1, set a clear target by end of this season and evaluate before making year-3 plans.';
+  } else if(isJR){
+    r.label='🔵 Junior pitcher — Peak performance window (1 year remaining after this)';
+    r.yearNote=above?'Peak velocity and command are typically here. She is in her prime contribution window.':'Below expectation in the junior year. If xFIP and SIERA have not improved from year 2, the ceiling has likely been reached.';
+    r.trajectory=above?'She is producing at her ceiling. Her value to the staff is confirmed — protect her innings and use her in high-leverage spots.':'If SIERA and xFIP have not improved significantly by now, the trajectory has likely plateaued. Plan accordingly.';
+    r.future=above?'Begin actively scouting who will take her innings in year 4. Do not wait until her senior year to address the succession — start now.':'Plan for a specialist/relief role as a senior. Actively recruit or portal a replacement starter for next season.';
+  } else {
+    r.label='🔴 Senior/Grad pitcher — Final season';
+    r.yearNote=above?'Veteran presence, proven command, trusted in pressure spots. Invaluable.':'Her departure opens a spot that can be upgraded.';
+    r.trajectory=above?'Final season of a strong career. Extract maximum value — high-leverage innings, mentorship role for younger arms.':'Her innings are available for redistribution next season. The replacement process should already be underway.';
+    r.future=above?'Her innings must be replaced. This is an urgent, confirmed portal or recruiting need — identify who takes those IP before the season ends.':'Active portal target at this position in the offseason. Replacing below-replacement production with an average arm is a net positive.';
+  }
+  return r;
+}
+
+// ====== ASSESSMENTS ======
+var A={
+'Penberthy, Kate':{p:'Program-best offensive season — wOBA .506, 13 HR, .710 SLG, OBP .446 in 184 PA. Highest offensive output on the roster by a wide margin.',i:'Already operating at elite level. Maintain plate discipline (14% S/M, 11.4% BB%) going into the postseason.'},
+'Flindt, Mya':{p:'Best power-contact combination — wOBA .466, 14 HR, .638 SLG, only 16% S/M in 160 PA. Elite offensive catcher.',i:'Catcher workload management is a factor. Continuing to produce at this rate through the final weeks validates the elite profile.'},
+'Gonzalez, Marissa':{p:'Career-best season — wOBA .439, SLG .658, 14 HR, 13% S/M in 174 PA. Power breakout is the story — doubled her HR total from prior projections.',i:'OBP .335 driven by a low walk rate. More plate patience pushes her into the elite tier alongside Penberthy and Flindt.'},
+'Romero, Sophia':{p:'Consistent AVG (.336), solid wOBA .371, 16% S/M in 124 PA. Added a second HR this season.',i:'Two HR limit the wOBA ceiling for a corner OF. Any consistent extra-base development meaningfully raises her floor.'},
+'Southerland, Quinn':{p:'Breakout wOBA .379, exceptional 10% S/M (lowest on team), OBP .394 in 177 PA. Added 2 HR and 7 SB — her best all-around season.',i:'SLG .428 — profile is evolving toward more power but still primarily contact-driven. Continue to develop the extra-base game.'},
+'Hughes, Chloe':{p:'Best OBP on roster (.459) with elite plate patience in 74 PA. wOBA .393 is strong production.',i:'16 errors at 2B (.881 fld%) is the single biggest drag on her EDGE. Defensive development is the top priority.'},
+'Crider, Jorja':{p:'wOBA .368 with real power (.414 SLG, 4 HR) in 97 PA. Offensive profile is meeting corner expectations.',i:'AVG .171 reflects 21% S/M — contact consistency must improve alongside the power numbers.'},
+'Stroh, Skylar':{p:'wOBA .367 in 195 PA with solid SS fundamentals and 13% S/M. Anchors the most important defensive position. 6 HR shows improved power.',i:'OBP .335 reflects a low walk rate. Improving plate patience meaningfully raises value from the SS position.'},
+'Farmer, Hollie':{p:'wOBA .317 in 167 PA, excellent 9% S/M — lowest on the team. Steady 3B defender.',i:'Zero HR, .299 SLG is too low for a corner 3B. Power development is the critical gap in her final season.'},
+'McNamara, LoulaRae':{p:'Program\'s most valuable player. Pitching: 103 IP, 83 SO, 1.44 WHIP, 18% K rate. Hitting EDGE adds on top.',i:'xFIP (2.07) is elite — among the best in D1. Maintaining BB rate below 9% and managing workload are the keys to finishing strong.'},
+'Vieira, Kaylee':{p:'wOBA .329 in 56 PA with real power (2 HR, .412 SLG). Shows upside in a limited sample.',i:'26% S/M well above team average. Fielding concerns (.714 fld%). Both contact approach and defense need targeted work.'},
+'Jenkins, Talia':{p:'Strong defensive catcher — .989 fld%. Provides backup depth and OBP value (wOBA .291).',i:'23% S/M above team average. The bat must develop to justify expanded role beyond backup.'},
+'Peffley, Grace':{p:'13% S/M below team average — solid contact approach in 29 PA. 3 SB shows athleticism.',i:'wOBA .229 in 29 PA — sample too small for firm conclusions. Needs more opportunity to evaluate.'},
+'Hernandez Lofton, Ashley':{p:'Elite speed — 8 SB in 42 PA. Legitimate pressure creator on the bases.',i:'29% S/M, wOBA .224 — best deployed as speed/pinch-running specialist while building plate discipline.'},
+'Galasso, Kaitlyn':{p:'Two-way freshman — also contributing on the mound (4.2 IP, 1.72 FIP, 1.29 WHIP). Clean defender at UT (1.000 fld%).',i:'wOBA .136, 26% S/M in 20 PA — hitting development is the primary focus. Pitching upside is real based on FIP and xFIP.'},
+'Flindt, Alyssa':{p:'Utility infield depth with 34 assists — shows she can handle the infield.',i:'43% S/M highest on team by a wide margin. Swing mechanics and pitch recognition are the primary focus.'},
+'Riley, Rustie':{p:'Backup catcher depth with 1.000 fld% in limited chances. Improved to .143 AVG in 24 PA.',i:'wOBA .201 in 24 PA — too small to evaluate definitively. Needs expanded playing time.'},
+'Hodge, Molly':{p:'Developmental athlete in very limited appearances.',i:'wOBA .107, 35% S/M in 15 PA — fundamental contact mechanics need significant work. Sample is very small.'},
+'Shorter, Tamryn':{p:'Redshirting due to injury. No 2026 stats available.',i:'Full recovery and return to health is the only priority this season.'}
+};
+var PA={
+'McNamara, LoulaRae':{p:'Staff ace. 18% SO rate above Top-100 avg. 103 IP. xFIP 2.07 is elite — top tier in D1. FIP 3.70. Record 9-6.',i:'BB rate 9% is the one control to tighten. The xFIP/FIP gap vs ERA suggests some run-support variance, but the underlying metrics are dominant.'},
+'Rose, Julianne':{p:'Best K rate on staff — 20% SO. xFIP 2.05 is elite — on par with the best arms in D1. ERA (4.50) significantly overstates her performance. 89 K in 96.1 IP. Record 9-10.',i:'BB rate 11% slightly above Top-100 avg. The run-support gap is the story — she is pitching at ace level. Trust xFIP and FIP (3.66) over ERA.'},
+'Duran, Charley':{p:'15% SO at Top-100 threshold. 51 IP across appearances — takes the ball reliably. xFIP 3.86 improved significantly.',i:'BB rate 18% critically high — more than double Top-100 avg. Command is the only path forward. FIP (5.38) reflects the BB problem.'},
+'Bauer, Olivia':{p:'63 IP across appearances — reliable volume. xFIP 3.81 improved meaningfully from earlier in the season.',i:'6% SO rate is lowest on staff, well below Top-100 avg. Must develop a strikeout pitch to raise the ceiling. FIP (5.66) and ERA (6.00) tell the same story.'},
+'Crabtree, Kodi':{p:'26.2 IP in relief. Improved WHIP to 1.46. Record 2-1. xFIP 3.99 improved significantly.',i:'BB rate 16% is still problematic. SIERA (6.51) reflects walk-driven underperformance. Command development is the only priority.'},
+'Galasso, Kaitlyn':{p:'Freshman two-way player making her pitching debut. FIP 1.72 and xFIP 1.72 are genuinely elite in 4.2 IP. 1.29 WHIP.',i:'Sample too small (4.2 IP) for firm conclusions, but the underlying metrics are excellent. Expanding her role on the mound should be evaluated this offseason.'},
+'Keighran, Shannon':{p:'Emergency pitching depth in 8.1 IP.',i:'10.08 ERA, 2.76 WHIP, 6% SO rate, xFIP 5.99. Command fundamentals must come first.'}
+};
+
+// ====== BUILD DETAIL BOX ======
+function buildDetailBox(p,isPos,alc,pEDGEval){
+  var as2=isPos?(A[p.name]||{p:'Contributes to depth.',i:'Continue development.'}):(PA[p.name]||{p:'Contributes to depth.',i:'Continue development.'});
+  var yr=p.yr||'FR';
+  var edgeForCtx=isPos?p.total:(pEDGEval||0);
+  var yc=isPos?yearContext(yr,edgeForCtx,p.pos):pitYearContext(yr,edgeForCtx);
+  var ssNote=(isPos&&ss(p.pa))?'<div class="apt"><span class="api">⚠️</span><span><strong>Small sample:</strong> Only '+p.pa+' PA — evaluate trajectory and tools, not just current EDGE number.</span></div>':'';
+  var twNote=(p.twoWay&&isPos)?'<div class="apt"><span class="api">⭐</span><span><strong>Two-way:</strong> pEDGE +'+p.pEDGE.toFixed(2)+' from pitching is included in total EDGE above.</span></div>':'';
+  var oE=isPos?(p.oEDGE||0):0;
+  var dE=isPos?(p.dEDGE||0):0;
+  var pEBar=isPos?(p.pEDGE||0):(pEDGEval||0);
+  var barHtml=(oE!==0||dE!==0||pEBar!==0)?buildEdgeBar(oE,dE,pEBar):'';
+  return '<div class="abox">'+
+    barHtml+
+    '<div class="apt"><span class="api">✅</span><span><strong>Production:</strong> '+as2.p+'</span></div>'+
+    '<div class="apt"><span class="api">📈</span><span><strong>Must improve:</strong> '+as2.i+'</span></div>'+
+    '<div class="yr-badge">'+yc.label+'</div>'+
+    '<div class="apt"><span class="api">📅</span><span><strong>Year context:</strong> '+yc.yearNote+'</span></div>'+
+    '<div class="apt"><span class="api">🔭</span><span><strong>Trajectory:</strong> '+yc.trajectory+'</span></div>'+
+    '<div class="apt"><span class="api">📋</span><span><strong>Roster outlook:</strong> '+yc.future+'</span></div>'+
+    (yc.portal?'<div class="apt"><span class="api">🔄</span><span><strong>Portal consideration:</strong> '+yc.portal+'</span></div>':'')+
+    '<div class="apt"><span class="api">💰</span><span><strong>Budget allocation:</strong> $'+alc.toLocaleString()+'</span></div>'+
+    ssNote+twNote+'</div>';
+}
+
+// ====== NAVIGATION ======
+function switchTab(id,btn){
+  document.querySelectorAll('.tp').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('.nb').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('tab-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+function toggleExp(id,btn){
+  var el=document.getElementById(id);
+  if(!el) return;
+  var open=el.classList.contains('open');
+  el.classList.toggle('open');
+  btn.textContent=open?'Details':'Close';
+}
+
+// ====== MAIN RENDER ======
+function renderAll(){
+  var d=buildData();
+  var budget=parseFloat(document.getElementById('bTotal').value)||100000;
+  var floor=parseFloat(document.getElementById('bFloor').value)||1000;
+  var active=d.all.filter(function(p){return !p.redshirt&&!p.incoming;});
+  var n=active.length;
+  // Use PA-scaled EDGE for SS players in variable pool (user directive: compete but scaled by PA/25)
+  var posEDGETotal=active.reduce(function(s,p){return s+Math.max(effEDGE(p),0);},0)||1;
+  var allS=d.all.slice().sort(function(a,b){return b.total-a.total;});
+  var pdS=d.pd.slice().sort(function(a,b){return b.total-a.total;});
+  var pitS=pitchers.slice().sort(function(a,b){return calcPEDGE(b)-calcPEDGE(a);});
+
+  // --- DASHBOARD METRICS ---
+  var top=allS.filter(function(p){return !p.redshirt&&!p.incoming;})[0]||{name:'—',total:0};
+  var tEDGE=active.reduce(function(s,p){return s+p.total;},0);
+  var negC=active.filter(function(p){return p.total<0;}).length;
+  document.getElementById('dash-metrics').innerHTML=
+    '<div class="met"><div class="ml">Record</div><div class="mv" style="font-size:18px">25-30</div><div class="ms">MW 11-14 &middot; May 2</div></div>'+
+    '<div class="met"><div class="ml">Team EDGE</div><div class="mv">'+tEDGE.toFixed(1)+'</div><div class="ms">vs Top-100 RPI baseline ERA 3.00</div></div>'+
+    '<div class="met"><div class="ml">Top player</div><div class="mv" style="font-size:14px">'+top.name.split(',')[0]+'</div><div class="ms">'+top.total.toFixed(2)+' EDGE</div></div>'+
+    '<div class="met"><div class="ml">Budget</div><div class="mv" style="font-size:18px">$'+(budget/1000).toFixed(0)+'K</div><div class="ms">revenue sharing</div></div>'+
+    '<div class="met"><div class="ml">Below replacement</div><div class="mv" style="color:var(--red)">'+negC+'</div><div class="ms">EDGE &lt; 0</div></div>'+
+    '<div class="met"><div class="ml">Top-100 ERA baseline</div><div class="mv" style="font-size:18px">3.00</div><div class="ms">Top-100 RPI weighted avg</div></div>';
+
+  // --- DASHBOARD EDGE TABLE ---
+  var db=document.getElementById('dash-war-body');
+  db.innerHTML='';
+  var rank=0;
+  allS.forEach(function(p){
+    if(!p.redshirt&&!p.incoming) rank++;
+    var isRS=p.redshirt, isINC=p.incoming;
+    var g=isRS?{g:'RS',c:'grs'}:isINC?{g:'INC',c:'ginc'}:gradeObj(p.total);
+    var edge400='—';
+    if(!isRS&&!isINC&&p.pa>=10){
+      var r4=Math.round((p.total/p.pa)*400*100)/100;
+      edge400='<span style="color:'+(r4>=1.0?'var(--green)':r4>=0?'var(--muted)':'var(--red)')+'">'+(r4>=0?'+':'')+r4.toFixed(2)+'</span>';
+    }
+    var tr=document.createElement('tr');
+    if(isRS) tr.className='r-rs';
+    else if(isINC) tr.className='r-inc';
+    else if(rank===1) tr.className='r-top';
+    else if(p.total<0) tr.className='r-neg';
+    tr.innerHTML=
+      '<td style="color:var(--muted);font-size:12px;font-weight:600">'+(isRS?'RS':isINC?'INC':rank)+'</td>'+
+      '<td><strong>'+p.name+'</strong>'+(p.twoWay?'<span class="twoflag">2-WAY</span>':'')+(ss(p.pa)&&!isRS&&!isINC?'<span class="ssflag">SS</span>':'')+'</td>'+
+      '<td>'+p.pos+'</td><td style="color:var(--muted)">'+p.yr+'</td>'+
+      '<td>'+(!isRS&&!isINC?fmtEDGE(p.total):'—')+'</td>'+
+      '<td>'+edge400+'</td>'+
+      '<td><div class="gc '+g.c+'">'+g.g+'</div></td>';
+    db.appendChild(tr);
+  });
+
+  // --- ROSTER TABLE ---
+  var pb=document.getElementById('pos-body');
+  pb.innerHTML='';
+  var maxAbs=Math.max.apply(null,pdS.filter(function(p){return !p.redshirt&&!p.incoming;}).map(function(p){return Math.abs(p.total);})||[1]);
+  pdS.forEach(function(p,i){
+    var isRS=p.redshirt, isINC=p.incoming;
+    var g=isRS?{g:'RS',c:'grs'}:isINC?{g:'INC',c:'ginc'}:gradeObj(p.total);
+    var rc=isRS?'r-rs':isINC?'r-inc':i===0?'r-top':p.total<0?'r-neg':'';
+    var ssFlag=!isRS&&!isINC&&ss(p.pa)?'<span class="ssflag">SS</span>':'';
+    var twFlag=p.twoWay?'<span class="twoflag">2-WAY</span>':'';
+    var smCol=isRS||isINC?'var(--muted)':p.sm>22?'var(--red)':p.sm<12?'var(--green)':'var(--muted)';
+    var edge400='—';
+    if(!isRS&&!isINC&&p.pa>=10){
+      var r4=Math.round((p.total/p.pa)*400*100)/100;
+      edge400='<strong style="color:'+(r4>=1.0?'#059669':r4>=0?'var(--muted)':'var(--red)')+'">'+(r4>=0?'+':'')+r4.toFixed(2)+'</strong>';
+    }
+    var bw=Math.round((Math.abs(p.total||0)/Math.max(maxAbs,0.01))*44);
+    var edgeCell=isRS||isINC?'—':'<div style="display:flex;align-items:center;gap:6px">'+
+      '<div style="height:5px;border-radius:3px;width:'+bw+'px;background:'+(p.total>=0?'#0033A0':'#dc2626')+';flex-shrink:0"></div>'+
+      fmtEDGE(p.total)+'</div>';
+    var tr=document.createElement('tr');
+    tr.className=rc;
+    tr.innerHTML=
+      '<td style="color:var(--muted);font-size:12px">'+p.num+'</td>'+
+      '<td><strong>'+p.name+'</strong>'+twFlag+ssFlag+'</td>'+
+      '<td>'+p.pos+'</td><td style="color:var(--muted)">'+p.yr+'</td>'+
+      '<td>'+(isRS||isINC?'—':p.pa)+'</td>'+
+      '<td>'+(isRS||isINC?'—':p.avg.toFixed(3))+'</td>'+
+      '<td>'+(isRS||isINC?'—':p.obp.toFixed(3))+'</td>'+
+      '<td>'+(isRS||isINC?'—':p.slg.toFixed(3))+'</td>'+
+      '<td><strong>'+(isRS||isINC?'—':p.woba.toFixed(3))+'</strong></td>'+
+      '<td><span style="color:'+smCol+'">'+(isRS||isINC?'—':p.sm+'%')+'</span></td>'+
+      '<td>'+(isRS||isINC?'—':p.hr||0)+'</td>'+
+      '<td>'+(isRS||isINC?'—':fmtEDGE(p.oEDGE))+'</td>'+
+      '<td style="opacity:.8">'+(isRS||isINC?'—':fmtEDGE(p.dEDGE))+' <span style="font-size:9px;color:var(--muted)">est</span></td>'+
+      '<td>'+edgeCell+'</td><td>'+edge400+'</td>'+
+      '<td><div class="gc '+g.c+'">'+g.g+'</div></td>'+
+      '<td>'+(isRS||isINC?'':'<button class="ebtn" onclick="toggleExp(\'pr-'+i+'\',this)">Details</button>')+'</td>';
+    pb.appendChild(tr);
+    if(!isRS&&!isINC){
+      var alc=getAlloc(effEDGE(p),posEDGETotal,budget,floor,n);
+      var xtr=document.createElement('tr');
+      xtr.id='pr-'+i; xtr.className='erow';
+      xtr.innerHTML='<td colspan="17">'+buildDetailBox(p,true,alc,0)+'</td>';
+      pb.appendChild(xtr);
+    }
+  });
+
+  // --- PITCHING TABLE ---
+  var pb2=document.getElementById('pit-body');
+  pb2.innerHTML='';
+  pitS.forEach(function(p,i){
+    if(p.incoming){
+      var tr=document.createElement('tr');
+      tr.className='r-inc';
+      tr.innerHTML=
+        '<td style="color:var(--muted);font-size:12px">—</td>'+
+        '<td><strong>'+p.name+'</strong></td>'+
+        '<td style="color:var(--muted)">'+p.yr+'</td>'+
+        '<td colspan="13" style="color:#10B981;font-size:12px;font-weight:600">INCOMING · No 2026 stats available</td>'+
+        '<td><div class="gc ginc">INC</div></td><td></td>';
+      pb2.appendChild(tr);
+      return;
+    }
+    var pEDGE=calcPEDGE(p);
+    var g=gradeObj(pEDGE);
+    var kbb=(p.so/Math.max(p.bb,1)).toFixed(2);
+    var rc=i===0?'r-top':pEDGE<0?'r-neg':'';
+    var kCol=p.kPct>=17?'var(--green)':p.kPct<10?'var(--red)':'var(--muted)';
+    var bCol=p.bbPct>15?'var(--red)':p.bbPct<10?'var(--green)':'var(--muted)';
+    var xCol=p.xfip<3.5?'var(--green)':p.xfip>5.0?'var(--red)':'var(--muted)';
+    var p100=p.ip>0?Math.round((pEDGE/p.ip)*100*100)/100:0;
+    var p100c=p100>=2.5?'var(--green)':p100>=1.0?'var(--blue)':p100>=0?'var(--muted)':'var(--red)';
+    var twobadge=p.twoWay?'<span class="twoflag">2-WAY</span>':'';
+    var alc=getAlloc(pEDGE,posEDGETotal,budget,floor,n);
+    var tr=document.createElement('tr');
+    tr.className=rc;
+    tr.innerHTML=
+      '<td style="color:var(--muted);font-size:12px">'+p.num+'</td>'+
+      '<td><strong>'+p.name+'</strong>'+twobadge+'</td>'+
+      '<td style="color:var(--muted)">'+p.yr+'</td>'+
+      '<td>'+p.wl+'</td><td>'+p.era.toFixed(2)+'</td><td>'+p.ip.toFixed(1)+'</td>'+
+      '<td><span style="font-weight:600;color:'+kCol+'">'+p.kPct+'%</span></td>'+
+      '<td><span style="color:'+bCol+'">'+p.bbPct+'%</span></td>'+
+      '<td><strong>'+kbb+'</strong></td><td>'+p.fip.toFixed(2)+'</td>'+
+      '<td><strong style="color:'+xCol+'">'+p.xfip.toFixed(2)+'</strong></td>'+
+      '<td>'+p.siera.toFixed(2)+'</td><td>'+p.whip.toFixed(2)+'</td>'+
+      '<td>'+fmtEDGE(pEDGE)+'</td>'+
+      '<td><strong style="color:'+p100c+'">'+(p100>=0?'+':'')+p100.toFixed(2)+'</strong></td>'+
+      '<td><div class="gc '+g.c+'">'+g.g+'</div></td>'+
+      '<td><button class="ebtn" onclick="toggleExp(\'pit-'+i+'\',this)">Details</button></td>';
+    pb2.appendChild(tr);
+    var pitObj=Object.assign({},p,{total:pEDGE});
+    var xtr=document.createElement('tr');
+    xtr.id='pit-'+i; xtr.className='erow';
+    xtr.innerHTML='<td colspan="17">'+buildDetailBox(pitObj,false,alc,pEDGE)+'</td>';
+    pb2.appendChild(xtr);
+  });
+
+  // --- BUDGET TABLE ---
+  var bb=document.getElementById('bud-body');
+  bb.innerHTML=''; var tot=0;
+  allS.forEach(function(p){
+    var eff=effEDGE(p);
+    var isNoPlay=p.redshirt||p.incoming;
+    var alc=isNoPlay?0:getAlloc(eff,posEDGETotal,budget,floor,n);
+    tot+=alc;
+    var isSSp=ss(p.pa)&&!isNoPlay;
+    var shareVal=isNoPlay?0:Math.max(eff,0)/posEDGETotal*100;
+    var share=isNoPlay?'—':shareVal.toFixed(1)+'%'+(isSSp?'<span style="font-size:10px;color:var(--muted);margin-left:3px">(adj)</span>':'');
+    var rl=p.type==='two'?'Two-way':p.type==='rs'?'Redshirt':p.type==='inc'?'Incoming':p.type==='pit'?'Pitcher':'Position';
+    var rb=p.type==='two'?'b-two':p.type==='rs'?'b-rs':p.type==='inc'?'b-inc':p.type==='pit'?'b-pit':'b-pos';
+    var tr=document.createElement('tr');
+    if(p.redshirt) tr.className='r-rs';
+    else if(p.incoming) tr.className='r-inc';
+    else if(p.total<0) tr.className='r-neg';
+    tr.innerHTML=
+      '<td><strong>'+p.name+'</strong>'+(isSSp?'<span class="ssflag" style="margin-left:4px">SS</span>':'')+'</td>'+
+      '<td>'+p.pos+'</td><td style="color:var(--muted)">'+p.yr+'</td>'+
+      '<td><span class="badge '+rb+'">'+rl+'</span></td>'+
+      '<td>'+(isNoPlay?'—':fmtEDGE(p.total))+'</td>'+
+      '<td>'+share+'</td>'+
+      '<td>'+(isNoPlay?'$0':'$'+floor.toLocaleString())+'</td>'+
+      '<td><strong style="color:'+(alc>floor?'var(--orange-bright)':'var(--text)')+'">$'+alc.toLocaleString()+'</strong></td>';
+    bb.appendChild(tr);
+  });
+  document.getElementById('bud-total').textContent='$'+tot.toLocaleString();
+
+  renderDecisions(allS,d,posEDGETotal,budget,floor,n);
+  renderNat();
+  renderRosterMakeup();
+}
+
+// ====== ROSTER DECISIONS (full detail, year-aware) ======
+function renderDecisions(allS,d,posEDGETotal,budget,floor,n){
+  var db=document.getElementById('dec-body');
+  db.innerHTML='';
+  var keep=allS.filter(function(p){return !p.redshirt&&p.total>=1.5;}).sort(function(a,b){return b.total-a.total;});
+  var dev=allS.filter(function(p){return !p.redshirt&&p.total>=0&&p.total<1.5;}).sort(function(a,b){return b.total-a.total;});
+  var risk=allS.filter(function(p){return !p.redshirt&&p.total<0;}).sort(function(a,b){return a.total-b.total;});
+  var rs=allS.filter(function(p){return p.redshirt;});
+
+  function bucket(list,cls,title){
+    if(!list.length) return;
+    var el=document.createElement('div'); el.className='dc';
+    var h='<div class="dh '+cls+'">'+title+' ('+list.length+')</div><div class="db">';
+    list.forEach(function(p){
+      var isPos=p.type!=='pit';
+      var pEDGEval=p.type==='pit'?p.total:p.pEDGE||0;
+      var alc=getAlloc(effEDGE(p),posEDGETotal,budget,floor,n);
+      var g=gradeObj(p.total);
+      h+='<div class="dp">'+
+        '<div class="dph">'+
+          '<div class="gc '+g.c+'" style="width:32px;height:32px;font-size:17px">'+g.g+'</div>'+
+          '<strong style="font-size:15px">'+p.name+'</strong>'+
+          (p.twoWay?'<span class="twoflag">2-WAY</span>':'')+
+          (ss(p.pa)&&isPos?'<span class="ssflag">SS</span>':'')+
+          '<span style="background:#222222;color:#A0A0A0;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;border:1px solid #333333">'+p.pos+'</span>'+
+          '<span style="background:#222222;color:#A0A0A0;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;border:1px solid #333333">'+p.yr+'</span>'+
+          fmtEDGE(p.total)+
+          '<span style="font-size:12px;color:var(--muted)">$'+alc.toLocaleString()+'</span>'+
+        '</div>'+
+        buildDetailBox(p,isPos,alc,pEDGEval)+
+        '</div>';
+    });
+    h+='</div>';
+    el.innerHTML=h;
+    db.appendChild(el);
+  }
+
+  bucket(keep,'keep','🟢 Retain — Core contributors (EDGE &ge; 1.5)');
+  bucket(dev,'dev','🔵 Develop — Investment players (EDGE 0–1.5)');
+  bucket(risk,'risk','🔴 Evaluate — Below replacement (EDGE &lt; 0)');
+
+  if(rs.length){
+    var el=document.createElement('div'); el.className='dc';
+    el.innerHTML='<div class="dh" style="background:rgba(99,102,241,0.12);color:#A5B4FC;border-bottom:1px solid rgba(99,102,241,0.2)">&#9898; Redshirt ('+rs.length+')</div><div class="db">'+
+      rs.map(function(p){return '<div class="dp">'+
+        '<div class="dph"><strong style="font-size:15px">'+p.name+'</strong>'+
+        '<span style="background:#222222;color:#A0A0A0;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;border:1px solid #333333">'+p.pos+'</span>'+
+        '<span style="background:#222222;color:#A0A0A0;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;border:1px solid #333333">'+p.yr+'</span></div>'+
+        '<div class="abox"><div class="apt"><span class="api">⚠️</span><span><strong>Status:</strong> Injury redshirt. No 2026 stats available.</span></div>'+
+        '<div class="apt"><span class="api">📋</span><span><strong>Priority:</strong> Support full recovery. Evaluate role for 2027 season when cleared for full activity.</span></div></div>'+
+        '</div>';}).join('')+'</div>';
+    db.appendChild(el);
+  }
+}
+
+// ====== NATIONAL COMPARISON ======
+function getNat(){
+  return {
+    woba:parseFloat(document.getElementById('nWoba').value)||0.360,
+    sm:parseFloat(document.getElementById('nSM').value)||16.0,
+    avg:parseFloat(document.getElementById('nAvg').value)||0.291,
+    slg:parseFloat(document.getElementById('nSlg').value)||0.445,
+    obp:parseFloat(document.getElementById('nObp').value)||0.375,
+    era:parseFloat(document.getElementById('nEra').value)||3.00,
+    xfip:parseFloat(document.getElementById('nXfip').value)||3.00,
+    kPct:parseFloat(document.getElementById('nKpct').value)||15.0,
+    bbPct:parseFloat(document.getElementById('nBbpct').value)||8.0,
+    fld:parseFloat(document.getElementById('nFld').value)||0.968
+  };
+}
+function renderNat(){
+  var nv=getNat();
+  var d=buildData();
+  var act=d.pd.filter(function(p){return !p.redshirt;}).sort(function(a,b){return b.total-a.total;});
+  var hb=document.getElementById('nat-hit-body');
+  hb.innerHTML='';
+  act.forEach(function(p){
+    var tr=document.createElement('tr');
+    tr.innerHTML=
+      '<td><strong>'+p.name+'</strong>'+(ss(p.pa)?'<span class="ssflag" style="margin-left:4px">SS</span>':'')+'</td>'+
+      '<td>'+p.pos+'</td><td style="color:var(--muted)">'+p.yr+'</td>'+
+      '<td><strong style="color:'+(p.woba>=nv.woba?'var(--green)':'var(--red)')+'">'+p.woba.toFixed(3)+'</strong></td>'+
+      '<td>'+diffBadge(p.woba,nv.woba,false,false)+'</td>'+
+      '<td><span style="color:'+(p.sm<=nv.sm?'var(--green)':'var(--red)')+'">'+p.sm+'%</span></td>'+
+      '<td>'+diffBadge(p.sm,nv.sm,true,true)+'</td>'+
+      '<td>'+p.avg.toFixed(3)+'</td>'+
+      '<td>'+diffBadge(p.avg,nv.avg,false,false)+'</td>'+
+      '<td>'+p.slg.toFixed(3)+'</td>'+
+      '<td>'+diffBadge(p.slg,nv.slg,false,false)+'</td>';
+    hb.appendChild(tr);
+  });
+  var pb=document.getElementById('nat-pit-body');
+  pb.innerHTML='';
+  pitchers.slice().sort(function(a,b){return a.era-b.era;}).forEach(function(p){
+    var tr=document.createElement('tr');
+    tr.innerHTML=
+      '<td><strong>'+p.name+'</strong>'+(p.twoWay?'<span class="twoflag" style="margin-left:4px">2-WAY</span>':'')+'</td>'+
+      '<td><strong style="color:'+(p.era<=nv.era?'var(--green)':'var(--red)')+'">'+p.era.toFixed(2)+'</strong></td>'+
+      '<td>'+diffBadge(p.era,nv.era,true,false)+'</td>'+
+      '<td><strong style="color:'+(p.xfip<=nv.xfip?'var(--green)':'var(--red)')+'">'+p.xfip.toFixed(2)+'</strong></td>'+
+      '<td>'+diffBadge(p.xfip,nv.xfip,true,false)+'</td>'+
+      '<td><span style="color:'+(p.kPct>=nv.kPct?'var(--green)':'var(--red)')+'">'+p.kPct+'%</span></td>'+
+      '<td>'+diffBadge(p.kPct,nv.kPct,false,true)+'</td>'+
+      '<td><span style="color:'+(p.bbPct<=nv.bbPct?'var(--green)':'var(--red)')+'">'+p.bbPct+'%</span></td>'+
+      '<td>'+diffBadge(p.bbPct,nv.bbPct,true,true)+'</td>'+
+      '<td>'+p.whip.toFixed(2)+'</td>';
+    pb.appendChild(tr);
+  });
+}
+
+// ====== OPPONENTS ======
+// ====== PORTAL ======
+function togglePF(){
+  var t=document.getElementById('pType').value;
+  document.getElementById('portal-hit').style.display=(t==='pit')?'none':'block';
+  document.getElementById('portal-pit').style.display=(t==='pos')?'none':'block';
+}
+function runPortal(){
+  var name=document.getElementById('pName').value.trim()||'Portal Player';
+  var pos=document.getElementById('pPos').value;
+  var type=document.getElementById('pType').value;
+  var yr=document.getElementById('pYear').value;
+  var school=document.getElementById('pSchool').value||'Unknown';
+  var budget=parseFloat(document.getElementById('bTotal').value)||100000;
+  var floor=parseFloat(document.getElementById('bFloor').value)||1000;
+  var d=buildData();
+  var active=d.all.filter(function(p){return !p.redshirt&&!p.incoming;});
+  var n=active.length+1;
+  var woba=parseFloat(document.getElementById('pWoba').value)||LEAGUE_WOBA;
+  var hr=parseFloat(document.getElementById('pHr').value)||0;
+  var sb=parseFloat(document.getElementById('pSb').value)||0;
+  var sm=parseFloat(document.getElementById('pSM').value)||16;
+  var fpct=parseFloat(document.getElementById('pFpct').value)||0;
+  var po=parseFloat(document.getElementById('pPo').value)||0;
+  var ast=parseFloat(document.getElementById('pAst').value)||0;
+  var e=parseFloat(document.getElementById('pE').value)||0;
+  var era=parseFloat(document.getElementById('pEra').value)||LEAGUE_ERA;
+  var ip=parseFloat(document.getElementById('pIp').value)||0;
+  var kPct=parseFloat(document.getElementById('pKpct').value)||15.0;
+  var bbPct=parseFloat(document.getElementById('pBbpct').value)||8;
+  var xfip=parseFloat(document.getElementById('pXfip').value)||LEAGUE_XFIP;
+  var whip=parseFloat(document.getElementById('pWhip').value)||1.40;
+  var wins=parseFloat(document.getElementById('pWins').value)||0;
+  var oEDGE=0,dEDGE=0,pEDGE=0;
+  if(type!=='pit'){
+    oEDGE=(woba-LEAGUE_WOBA)/LEAGUE_WOBA*5.0+hr*0.12+sb*0.05;
+    if(sm>16) oEDGE-=(sm-16)*0.015;
+    oEDGE=Math.round(oEDGE*100)/100;
+    var tc=po+ast+e;
+    var fBase=tc>0?((fpct-LEAGUE_FLD)/0.040*1.5):0;
+    dEDGE=Math.round((fBase+(po+ast)/200)*(POS_W[pos]||1.0)*100)/100;
+  }
+  if(type!=='pos'&&ip>0){
+    pEDGE=(LEAGUE_ERA-era)/LEAGUE_ERA*(ip/55)*3.0+(kPct-15.0)*0.07-(bbPct-8)*0.07+(LEAGUE_XFIP-xfip)/LEAGUE_XFIP*1.2+wins*0.15-whip*0.4;
+    pEDGE=Math.round(pEDGE*100)/100;
+  }
+  var total=Math.round((oEDGE+dEDGE+pEDGE)*100)/100;
+  // BSU position comparison
+  var samePos=d.all.filter(function(p){return !p.redshirt&&p.pos===pos;}).sort(function(a,b){return b.total-a.total;});
+  var posCompHtml='';
+  if(samePos.length){
+    var comp=samePos[0];
+    var wd=total-comp.total;
+    posCompHtml='<div class="apt"><span class="api">⚖️</span><span><strong>vs. best BSU '+pos+' ('+comp.name.split(',')[0]+', '+fmtEDGE(comp.total)+'):</strong> Portal player is <strong style="color:'+(wd>=0?'var(--green)':'var(--red)')+'">'+(wd>=0?'+':'')+wd.toFixed(2)+' EDGE</strong> relative to that player.</span></div>';
+  }
+  var allEdges=active.map(function(p){return p.total;}).concat([total]).sort(function(a,b){return b-a;});
+  var rank=allEdges.indexOf(total)+1;
+  var posEDGETotal=active.reduce(function(s,p){return s+Math.max(p.total,0);},0)+Math.max(total,0)||1;
+  var alc=getAlloc(total,posEDGETotal,budget,floor,n);
+  var g=gradeObj(total);
+  // Year context for portal player
+  var ycPortal=type!=='pit'?yearContext(yr,total,pos):pitYearContext(yr,total);
+  var pAvg=document.getElementById('pAvg').value;
+  var pSlg=document.getElementById('pSlg').value;
+  // Roster fit note
+  var rosterFitHtml='';
+  (function(){
+    var counts=getRosterCounts();
+    var cur=counts[pos]||0;
+    var ideal=ROSTER_IDEAL[pos];
+    if(ideal!==undefined){
+      var newCt=cur+1,fd=newCt-ideal;
+      var firstName=name.split(',').length>1?name.split(',')[1].trim():name.split(' ')[0];
+      if(fd===0){
+        rosterFitHtml='<div class="apt"><span class="api">✅</span><span><strong>Roster fit:</strong> Adding '+firstName+' as '+pos+' brings BSU to <strong style="color:#10B981">'+newCt+'/'+ideal+'</strong> — completes the roster need at '+pos+'.</span></div>';
+      } else if(fd>0){
+        rosterFitHtml='<div class="apt"><span class="api">⚠️</span><span><strong>Roster fit:</strong> Adding '+firstName+' as '+pos+' puts BSU at <strong style="color:#dc2626">'+newCt+'/'+ideal+' ('+fd+' over ideal)</strong> — over the position limit.</span></div>';
+      } else {
+        rosterFitHtml='<div class="apt"><span class="api">📋</span><span><strong>Roster fit:</strong> Adding '+firstName+' as '+pos+' brings BSU to <strong style="color:#f59e0b">'+newCt+'/'+ideal+'</strong> — still '+Math.abs(fd)+' short of ideal.</span></div>';
+      }
+    }
+    if(OF_KEYS.indexOf(pos)>-1){
+      var ofCur=OF_KEYS.reduce(function(s,k){return s+(counts[k]||0);},0);
+      var ofNew=ofCur+1,ofD=ofNew-6;
+      var ofNote=ofD===0?' · OF Total: <strong style="color:#10B981">'+ofNew+'/6 ✓</strong>':
+        ofD>0?' · OF Total: <strong style="color:#dc2626">'+ofNew+'/6 ('+ofD+' over)</strong>':
+        ' · OF Total: <strong style="color:#f59e0b">'+ofNew+'/6</strong>';
+      rosterFitHtml=rosterFitHtml.replace('</span></div>',ofNote+'</span></div>');
+    }
+  })();
+  renderRosterMakeup(pos);
+  document.getElementById('portalResult').innerHTML='<div class="pr">'+
+    '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">'+
+      '<div class="gc '+g.c+'" style="width:42px;height:42px;font-size:20px">'+g.g+'</div>'+
+      '<div><div style="font-family:\'Barlow Condensed\',sans-serif;font-size:22px;font-weight:700">'+name+'</div>'+
+      '<div style="font-size:12px;color:var(--muted)">'+pos+' · '+yr+' · '+school+'</div></div></div>'+
+    '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:14px">'+
+      '<div class="met" style="padding:.75rem 1rem"><div class="ml">oEDGE</div><div class="mv" style="font-size:20px">'+fmtEDGE(oEDGE)+'</div></div>'+
+      '<div class="met" style="padding:.75rem 1rem"><div class="ml">dEDGE</div><div class="mv" style="font-size:20px">'+fmtEDGE(dEDGE)+'</div></div>'+
+      '<div class="met" style="padding:.75rem 1rem"><div class="ml">pEDGE</div><div class="mv" style="font-size:20px">'+fmtEDGE(pEDGE)+'</div></div>'+
+      '<div class="met" style="padding:.75rem 1rem"><div class="ml">Total EDGE</div><div class="mv" style="font-size:20px">'+fmtEDGE(total)+'</div></div>'+
+      '<div class="met" style="padding:.75rem 1rem"><div class="ml">BSU rank</div><div class="mv" style="font-size:20px">#'+rank+'</div></div>'+
+      '<div class="met" style="padding:.75rem 1rem"><div class="ml">Est. allocation</div><div class="mv" style="font-size:14px">$'+alc.toLocaleString()+'</div></div>'+
+    '</div>'+
+    '<div class="abox">'+
+      rosterFitHtml+
+      posCompHtml+
+      '<div class="yr-badge">'+ycPortal.label+'</div>'+
+      '<div class="apt"><span class="api">📅</span><span><strong>Year context:</strong> '+ycPortal.yearNote+'</span></div>'+
+      '<div class="apt"><span class="api">📋</span><span><strong>Roster outlook:</strong> '+ycPortal.future+'</span></div>'+
+      (ycPortal.portal?'<div class="apt"><span class="api">🔄</span><span><strong>Portal consideration:</strong> '+ycPortal.portal+'</span></div>':'')+
+      '<div class="apt"><span class="api">📊</span><span><strong>Context stats entered:</strong> wOBA '+woba.toFixed(3)+
+        (pAvg?' · AVG '+parseFloat(pAvg).toFixed(3):'')+
+        (pSlg?' · SLG '+parseFloat(pSlg).toFixed(3):'')+
+        ' · S/M% '+sm+'%</span></div>'+
+
+      '<div class="apt"><span class="api">💡</span><span>EDGE is calculated against the same Top-100 RPI baseline (ERA 3.00, wOBA .360) as every BSU player. BSU rank shows where this player slots on the current roster.</span></div>'+
+    '</div></div>';
+  portalPlayers.push({name:name,pos:pos,school:school,woba:woba,sm:sm,total:total,rank:rank,alc:alc});
+  renderPortalList();
+}
+function removePortalPlayer(i){
+  portalPlayers.splice(i,1);
+  renderPortalList();
+  renderRosterMakeup();
+}
+function renderPortalList(){
+  var el=document.getElementById('portalList');
+  el.innerHTML='';
+  if(!portalPlayers.length){
+    el.innerHTML='<tr><td colspan="10" style="color:var(--muted);padding:12px">No portal players compared yet.</td></tr>';
+    return;
+  }
+  portalPlayers.forEach(function(p,i){
+    var g=gradeObj(p.total);
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td><strong>'+p.name+'</strong></td><td>'+p.pos+'</td><td>'+p.school+'</td>'+
+      '<td>'+p.woba.toFixed(3)+'</td><td>'+p.sm+'%</td>'+
+      '<td>'+fmtEDGE(p.total)+'</td><td>#'+p.rank+'</td><td>$'+p.alc.toLocaleString()+'</td>'+
+      '<td><div class="gc '+g.c+'">'+g.g+'</div></td>'+
+      '<td><button onclick="removePortalPlayer('+i+')" style="background:none;border:none;cursor:pointer;color:#dc2626;font-size:15px;padding:2px 6px;border-radius:4px;line-height:1" title="Remove from session">🗑</button></td>';
+    el.appendChild(tr);
+  });
+}
+function clearPortal(){
+  ['pName','pSchool'].forEach(function(id){document.getElementById(id).value='';});
+  ['pWoba','pSM','pHr','pSb','pAvg','pObp','pSlg','pPa','pFpct','pPo','pAst','pE',
+   'pEra','pIp','pKpct','pBbpct','pXfip','pWhip','pWins','pFip','pSiera'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('portalResult').innerHTML='';
+  renderRosterMakeup();
+}
+
+// ====== INIT ======
+renderAll();
+renderPortalList();
+
+</script>
+</body>
+</html>
