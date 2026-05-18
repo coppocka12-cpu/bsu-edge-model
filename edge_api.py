@@ -1,18 +1,9 @@
 #!/usr/bin/env python3
 """
 BSU EDGE Model — Schedule API Server
-Scrapes NCAA softball schedules and RPI rankings for portal player lookups.
-
-Run once in Terminal:
-    cd "/Users/anthonycoppock/Documents/Bronco Pro Edge"
-    pip3 install flask requests beautifulsoup4
-    python3 edge_api.py
-
-API at http://localhost:7424
-Endpoints:
-  /api/schedule?school=Oregon+State   → {totalGames, t100Games, t100Opponents}
-  /api/health                          → {status: 'ok'}
+Uses Warren Nolan for Top-100 RPI list and team schedules.
 """
+import os
 import re
 from flask import Flask, request, jsonify
 import requests
@@ -31,64 +22,25 @@ HTTP.headers.update(HEADERS)
 
 _cache = {}
 
-# Common D1 softball abbreviations → normalized name
-ABBREV = {
-    'lsu':          'louisiana state',
-    'ole miss':     'mississippi',
-    'unlv':         'nevada las vegas',
-    'uconn':        'connecticut',
-    'ucf':          'central florida',
-    'usf':          'south florida',
-    'fiu':          'florida international',
-    'fau':          'florida atlantic',
-    'utsa':         'texas san antonio',
-    'utep':         'texas el paso',
-    'uab':          'alabama birmingham',
-    'smu':          'southern methodist',
-    'tcu':          'texas christian',
-    'vcu':          'virginia commonwealth',
-    'unc':          'north carolina',
-    'ncsu':         'north carolina state',
-    'nc state':     'north carolina state',
-    'psu':          'penn state',
-    'fsu':          'florida state',
-    'wku':          'western kentucky',
-    'eku':          'eastern kentucky',
-    'wvu':          'west virginia',
-    'vt':           'virginia tech',
-    'usc':          'southern california',
-    'ucla':         'california los angeles',
-    'ucsb':         'california santa barbara',
-    'cal poly':     'california polytechnic san luis obispo',
-    'cal poly slo': 'california polytechnic san luis obispo',
-    'cal poly pomona': 'california polytechnic pomona',
-    'slo':          'california polytechnic san luis obispo',
-    'usd':          'san diego',
-    'sdsu':         'san diego state',
-    'sjsu':         'san jose state',
-    'csun':         'cal state northridge',
-    'csuf':         'cal state fullerton',
-    'csulb':        'cal state long beach',
-    'lbsu':         'cal state long beach',
-    'tamu':         'texas a&m',
-    'a&m':          'texas a&m',
-}
 
-STOP_WORDS = {'university', 'college', 'of', 'the', 'at', 'a&m', 'am', '&'}
+def slug_from_name(name):
+    """Convert a school name to a Warren Nolan URL slug. e.g. 'Oregon State' → 'Oregon-State'"""
+    return '-'.join(w.capitalize() for w in name.strip().split())
+
+
+def name_from_slug(slug):
+    """Convert a WN slug back to a display name. e.g. 'Oregon-State' → 'Oregon State'"""
+    return slug.replace('-', ' ')
 
 
 def normalize(name):
-    """Lower-case, strip punctuation, remove stop-words for fuzzy matching."""
+    """Lowercase, strip punctuation/stop-words for fuzzy matching."""
     name = name.lower().strip()
-    name = re.sub(r'\bat\b', '', name)         # "at Oregon State" → "Oregon State"
-    name = re.sub(r'[^\w\s]', ' ', name)       # punctuation → space
+    name = re.sub(r'\bat\b', '', name)
+    name = re.sub(r'[^\w\s]', ' ', name)
     name = re.sub(r'\s+', ' ', name).strip()
-    for abbr, full in ABBREV.items():
-        if name == abbr or name.startswith(abbr + ' '):
-            name = name.replace(abbr, full, 1)
-            break
-    # Strip stop words for comparison only
-    parts = [w for w in name.split() if w not in STOP_WORDS]
+    stop = {'university', 'college', 'of', 'the', 'at', 'a'}
+    parts = [w for w in name.split() if w not in stop]
     return ' '.join(parts)
 
 
@@ -103,7 +55,6 @@ def teams_match(a, b):
         return True
     if len(nb) > 4 and nb in na:
         return True
-    # Word overlap (at least 2 shared meaningful words, covering ≥60% of shorter name)
     wa = set(na.split()) - {'', 'st'}
     wb = set(nb.split()) - {'', 'st'}
     if wa and wb:
@@ -115,119 +66,117 @@ def teams_match(a, b):
 
 
 def fetch_top100():
-    """Return list of Top-100 RPI team names from NCAA.com. Cached for the session."""
+    """Return list of (slug, display_name) for Top-100 RPI teams from Warren Nolan."""
     if 'top100' in _cache:
         return _cache['top100']
 
     teams = []
-    url = 'https://www.ncaa.com/rankings/softball/d1/ncaa-womens-softball-rpi'
-
+    url = 'https://www.warrennolan.com/softball/2026/rpi-live'
     try:
         r = HTTP.get(url, timeout=15)
         r.raise_for_status()
         soup = BeautifulSoup(r.text, 'html.parser')
-
-        table = soup.find('table')
+        table = soup.find('table', class_='stats-table')
         if not table:
-            print('[RPI] No table found on NCAA.com rankings page')
+            print('[RPI] No stats-table found on Warren Nolan')
         else:
             rows = table.find_all('tr')
-            for row in rows[1:]:           # skip header row
+            for row in rows[1:]:
                 if len(teams) >= 100:
                     break
+                # rank is in first td
                 cells = row.find_all('td')
-                if len(cells) >= 2:
-                    # col0 = rank (digit), col1 = school name
-                    name = cells[1].get_text(strip=True)
-                    if name:
-                        teams.append(name)
+                if not cells:
+                    continue
+                rank_text = cells[0].get_text(strip=True)
+                if not rank_text.isdigit():
+                    continue
+                # find schedule link to get clean slug
+                link = row.find('a', href=re.compile(r'/softball/2026/schedule/'))
+                if link:
+                    slug = link['href'].split('/')[-1]
+                    display = name_from_slug(slug)
+                    teams.append((slug, display))
 
-        print(f'[RPI] NCAA.com: {len(teams)} Top-100 teams loaded')
+        print(f'[RPI] Warren Nolan: {len(teams)} Top-100 teams loaded')
     except Exception as e:
-        print(f'[RPI] NCAA.com error: {e}')
+        print(f'[RPI] Error: {e}')
 
     _cache['top100'] = teams
     return teams
 
 
-def find_ncaa_team_id(school):
-    """Return NCAA team ID string for a D1 softball school, or None."""
-    key = f'tid_{school}'
+def find_wn_slug(school):
+    """
+    Find the Warren Nolan schedule slug for a given school name.
+    First tries the direct slug, then falls back to fuzzy-matching against the full team list.
+    """
+    key = f'slug_{school}'
     if key in _cache:
         return _cache[key]
 
+    # Try direct conversion first
+    direct_slug = slug_from_name(school)
+    url = f'https://www.warrennolan.com/softball/2026/schedule/{direct_slug}'
     try:
-        r = HTTP.get(
-            'https://stats.ncaa.org/teams/search',
-            params={'q': school, 'sport_code': 'WSB', 'division': '1'},
-            timeout=15
-        )
-        soup = BeautifulSoup(r.text, 'html.parser')
-        for link in soup.find_all('a', href=re.compile(r'/teams/\d+')):
-            m = re.search(r'/teams/(\d+)', link['href'])
-            if m:
-                tid = m.group(1)
-                print(f'[Team] "{school}" → ID {tid}')
-                _cache[key] = tid
-                return tid
-    except Exception as e:
-        print(f'[Team] Search error: {e}')
+        r = HTTP.get(url, timeout=15)
+        if r.status_code == 200 and 'schedule' in r.text.lower():
+            print(f'[Team] "{school}" → direct slug "{direct_slug}"')
+            _cache[key] = direct_slug
+            return direct_slug
+    except Exception:
+        pass
 
+    # Fall back: search the teams-az page for a fuzzy match
+    try:
+        r = HTTP.get('https://www.warrennolan.com/softball/2026/teams-az', timeout=15)
+        soup = BeautifulSoup(r.text, 'html.parser')
+        links = soup.find_all('a', href=re.compile(r'/softball/2026/schedule/'))
+        for link in links:
+            slug = link['href'].split('/')[-1]
+            candidate = name_from_slug(slug)
+            if teams_match(school, candidate):
+                print(f'[Team] "{school}" → fuzzy match "{slug}"')
+                _cache[key] = slug
+                return slug
+    except Exception as e:
+        print(f'[Team] Fuzzy search error: {e}')
+
+    print(f'[Team] "{school}" not found')
+    _cache[key] = None
     return None
 
 
-def fetch_schedule(team_id):
-    """Return (opponents:list[str], total_played:int) for a team ID."""
-    key = f'sched_{team_id}'
+def fetch_schedule(slug):
+    """Return (opponents: list[str], total_played: int) for a Warren Nolan team slug."""
+    key = f'sched_{slug}'
     if key in _cache:
         return _cache[key]
 
     opponents = []
-    total = 0
-
+    url = f'https://www.warrennolan.com/softball/2026/schedule/{slug}'
     try:
-        r = HTTP.get(f'https://stats.ncaa.org/teams/{team_id}/schedule', timeout=15)
+        r = HTTP.get(url, timeout=15)
+        r.raise_for_status()
         soup = BeautifulSoup(r.text, 'html.parser')
 
-        for row in soup.select('table tbody tr'):
-            cells = row.find_all('td')
-            if len(cells) < 2:
+        # Opponent links are schedule links to other teams
+        seen = set()
+        opp_links = soup.find_all('a', href=re.compile(r'/softball/2026/schedule/'))
+        for link in opp_links:
+            opp_slug = link['href'].split('/')[-1]
+            if opp_slug.lower() == slug.lower():
                 continue
-
-            # A completed game has a W/L result somewhere in the row
-            result = ''
-            for cell in cells:
-                t = cell.get_text(strip=True)
-                if re.match(r'^[WwLl]\s*\d', t) or t in ('W', 'L', 'w', 'l'):
-                    result = t
-                    break
-            if not result:
+            if opp_slug in seen:
                 continue
+            seen.add(opp_slug)
+            opponents.append(name_from_slug(opp_slug))
 
-            # Find opponent name — skip date-shaped cells, skip result cell
-            opp = ''
-            for cell in cells:
-                t = cell.get_text(strip=True)
-                if re.match(r'^\d{1,2}/\d{1,2}', t):   # date cell like "03/14"
-                    continue
-                if re.match(r'^[WwLl]\s*[\d-]', t):     # result cell
-                    continue
-                if t and len(t) > 2:
-                    link = cell.find('a')
-                    opp = link.get_text(strip=True) if link else t
-                    opp = re.sub(r'^[@#*\s]+', '', opp).strip()
-                    if len(opp) > 2:
-                        break
-
-            if opp:
-                opponents.append(opp)
-                total += 1
-
-        print(f'[Schedule] Team {team_id}: {total} completed games')
+        print(f'[Schedule] {slug}: {len(opponents)} opponents found')
     except Exception as e:
-        print(f'[Schedule] Error: {e}')
+        print(f'[Schedule] Error for {slug}: {e}')
 
-    result = (opponents, total)
+    result = (opponents, len(opponents))
     _cache[key] = result
     return result
 
@@ -249,21 +198,21 @@ def api_schedule():
 
     top100 = fetch_top100()
     if not top100:
-        return jsonify({'error': 'Could not load RPI rankings from Warren Nolan. Check your internet connection.'}), 503
+        return jsonify({'error': 'Could not load RPI rankings from Warren Nolan.'}), 503
 
-    team_id = find_ncaa_team_id(school)
-    if not team_id:
-        return jsonify({'error': f'"{school}" not found in NCAA D1 softball. Try the full official school name (e.g. "Oregon State", "Arizona State").'}), 404
+    slug = find_wn_slug(school)
+    if not slug:
+        return jsonify({'error': f'"{school}" not found. Try the full official school name (e.g. "Oregon State", "Arizona State").'}), 404
 
-    opponents, total = fetch_schedule(team_id)
+    opponents, total = fetch_schedule(slug)
     if total == 0:
-        return jsonify({'error': f'No completed 2026 games found for "{school}". Schedule data may not be available yet.'}), 404
+        return jsonify({'error': f'No completed games found for "{school}". Schedule may not be available yet.'}), 404
 
     t100_games = 0
     t100_opps = []
     for opp in opponents:
-        for t100 in top100:
-            if teams_match(opp, t100):
+        for t100_slug, t100_name in top100:
+            if teams_match(opp, t100_name):
                 t100_games += 1
                 t100_opps.append(opp)
                 break
@@ -283,7 +232,6 @@ def health():
 
 
 if __name__ == '__main__':
-    import os
     port = int(os.environ.get('PORT', 7424))
     print('=' * 52)
     print(f'  BSU EDGE Schedule API  →  port {port}')
