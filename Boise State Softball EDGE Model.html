@@ -350,7 +350,7 @@ input[type=range]{width:100%;accent-color:var(--orange-bright);cursor:pointer;ma
   <div class="card">
     <div class="ct">Portal players this session</div>
     <div class="tw"><table>
-      <thead><tr><th>Name</th><th>Pos</th><th>School</th><th>wOBA</th><th>S/M%</th><th>EDGE</th><th>BSU rank</th><th>Allocation</th><th>Grade</th><th></th></tr></thead>
+      <thead><tr><th>Name</th><th>Pos</th><th>School</th><th>wOBA</th><th>S/M%</th><th>EDGE</th><th>BSU rank</th><th>Allocation</th><th>vs Top-100</th><th>Grade</th><th></th></tr></thead>
       <tbody id="portalList"></tbody>
     </table></div>
   </div>
@@ -1185,6 +1185,7 @@ function runPortal(){
       '<div class="met" style="padding:.75rem 1rem"><div class="ml">Total EDGE</div><div class="mv" style="font-size:20px">'+fmtEDGE(total)+'</div></div>'+
       '<div class="met" style="padding:.75rem 1rem"><div class="ml">BSU rank</div><div class="mv" style="font-size:20px">#'+rank+'</div></div>'+
       '<div class="met" style="padding:.75rem 1rem"><div class="ml">Est. allocation</div><div class="mv" style="font-size:14px">$'+alc.toLocaleString()+'</div></div>'+
+      '<div class="met" id="p-t100-tile" style="padding:.75rem 1rem"><div class="ml">vs Top-100 RPI</div><div class="mv" style="font-size:13px;color:var(--muted)">⏳ Loading…</div></div>'+
     '</div>'+
     '<div class="abox">'+
       rosterFitHtml+
@@ -1200,27 +1201,46 @@ function runPortal(){
 
       '<div class="apt"><span class="api">💡</span><span>EDGE is calculated against the same Top-100 RPI baseline (ERA 3.00, wOBA .360) as every BSU player. BSU rank shows where this player slots on the current roster.</span></div>'+
     '</div></div>';
-  portalPlayers.push({name:name,pos:pos,school:school,woba:woba,sm:sm,total:total,rank:rank,alc:alc});
+  var pidx=portalPlayers.length;
+  portalPlayers.push({name:name,pos:pos,school:school,woba:woba,sm:sm,total:total,rank:rank,alc:alc,t100:null,totalGames:null});
   renderPortalList();
+  if(school&&school!=='Unknown') fetchT100Schedule(school,pidx);
 }
 function removePortalPlayer(i){
   portalPlayers.splice(i,1);
   renderPortalList();
   renderRosterMakeup();
 }
+function fetchT100Schedule(school,pidx){
+  fetch('https://bsu-edge-model.onrender.com/api/schedule?school='+encodeURIComponent(school))
+    .then(function(r){return r.json();})
+    .then(function(data){
+      var t100=data.t100Games||0,tot=data.totalGames||0;
+      var tile=document.getElementById('p-t100-tile');
+      if(tile) tile.innerHTML='<div class="ml">vs Top-100 RPI</div><div class="mv" style="font-size:18px">'+t100+'<span style="font-size:11px;color:var(--muted);margin-left:4px">/ '+tot+' GP</span></div>';
+      if(portalPlayers[pidx]){portalPlayers[pidx].t100=t100;portalPlayers[pidx].totalGames=tot;}
+      renderPortalList();
+    })
+    .catch(function(){
+      var tile=document.getElementById('p-t100-tile');
+      if(tile) tile.innerHTML='<div class="ml">vs Top-100 RPI</div><div class="mv" style="font-size:11px;color:var(--muted)">Start edge_api.py<br>to enable</div>';
+    });
+}
 function renderPortalList(){
   var el=document.getElementById('portalList');
   el.innerHTML='';
   if(!portalPlayers.length){
-    el.innerHTML='<tr><td colspan="10" style="color:var(--muted);padding:12px">No portal players compared yet.</td></tr>';
+    el.innerHTML='<tr><td colspan="11" style="color:var(--muted);padding:12px">No portal players compared yet.</td></tr>';
     return;
   }
   portalPlayers.forEach(function(p,i){
     var g=gradeObj(p.total);
     var tr=document.createElement('tr');
+    var t100Cell=p.t100!==null&&p.t100!==undefined?'<strong>'+p.t100+'</strong><span style="font-size:11px;color:var(--muted)"> / '+p.totalGames+' GP</span>':'<span style="color:var(--muted)">—</span>';
     tr.innerHTML='<td><strong>'+p.name+'</strong></td><td>'+p.pos+'</td><td>'+p.school+'</td>'+
       '<td>'+p.woba.toFixed(3)+'</td><td>'+p.sm+'%</td>'+
       '<td>'+fmtEDGE(p.total)+'</td><td>#'+p.rank+'</td><td>$'+p.alc.toLocaleString()+'</td>'+
+      '<td>'+t100Cell+'</td>'+
       '<td><div class="gc '+g.c+'">'+g.g+'</div></td>'+
       '<td><button onclick="removePortalPlayer('+i+')" style="background:none;border:none;cursor:pointer;color:#dc2626;font-size:15px;padding:2px 6px;border-radius:4px;line-height:1" title="Remove from session">🗑</button></td>';
     el.appendChild(tr);
